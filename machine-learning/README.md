@@ -1,4 +1,6 @@
 # Machine-Learning project
+![Alt text](./.assets/level_1_ml.png "Level 1 Diagram of ml system")
+
 ## ml-backend server
 ### To develop:
 - Create a python3 venv
