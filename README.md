@@ -1,2 +1,2 @@
 # NICE
-Neurological Image Classification Evaluator
+Neurological Imaging Classification & Evaluation
