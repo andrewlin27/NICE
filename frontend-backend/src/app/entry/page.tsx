@@ -5,10 +5,10 @@ const EntryPage = async () => {
     // insert a new entry
     async function addEntry() {
         const newEntry = {
-            first_name: "William",
-            last_name: "Wu",
+            first_name: "Eric",
+            last_name: "Burns",
             age: 21,
-            physician_id: 1,
+            user_id: 1,
         };
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/addEntry`, {
@@ -29,10 +29,33 @@ const EntryPage = async () => {
         catch (error) {
             console.error("Error posting entry:", error);
         }
-    }
+      }
+    
+    const searchTerm = "eric";
+
+    const fetchEntriesByName = async () => {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getEntryByName`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ searchTerm }),
+        });
+        const data = await response.json();
+        if (response.ok) {
+          console.log("Fetched entries:", data);
+        } else {
+          console.error("Error fetching entries:", data.error);
+        }
+    };
+      
+    //addEntry();
+    fetchEntriesByName();
 
     return (
-        <div>EntryPage</div>
+        <div>
+            <h1>Entries</h1>
+        </div>
     )
 }
 
