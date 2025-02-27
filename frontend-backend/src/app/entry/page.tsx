@@ -5,10 +5,10 @@ const EntryPage = async () => {
     // insert a new entry
     async function addEntry() {
         const newEntry = {
-          first_name: "William",
-          last_name: "Wu",
-          age: 21,
-          physician_id: 1,
+            first_name: "William",
+            last_name: "Wu",
+            age: 21,
+            physician_id: 1,
         };
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/addEntry`, {
@@ -26,10 +26,14 @@ const EntryPage = async () => {
                 alert(`Error: ${errorData.error}`);
             }
         }
-        catch(error) {
+        catch (error) {
             console.error("Error posting entry:", error);
         }
-      }
+    }
+
+    return (
+        <div>EntryPage</div>
+    )
 }
 
 

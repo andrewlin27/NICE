@@ -2,8 +2,9 @@ import React from 'react'
 
 const page = async ({ params } : { params:any }) => {
   // const response = await fetch(`/api/entry/${params.entryId}`)
+  const prop = await params
   return (
-    <div>entryId: {params.entryId}</div>
+    <div>entryId: {prop.entryId}</div>
   )
 }
 
