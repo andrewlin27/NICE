@@ -1,24 +1,24 @@
 import React from 'react'
 
-const PatientPage = async () => {
+const EntryPage = async () => {
 
-    // insert a new patient
-    async function addPatient() {
-        const newPatient = {
+    // insert a new entry
+    async function addEntry() {
+        const newEntry = {
           first_name: "William",
           last_name: "Wu",
           age: 21,
           physician_id: 1,
         };
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/patients/addPatient`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/addEntry`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newPatient),
+                body: JSON.stringify(newEntry),
             });
             if (response.ok) {
                 const data = await response.json();
-                console.log("Inserted patient:", data);
+                console.log("Inserted entry:", data);
             }
             else {
                 const errorData = await response.json();
@@ -27,10 +27,10 @@ const PatientPage = async () => {
             }
         }
         catch(error) {
-            console.error("Error posting patient:", error);
+            console.error("Error posting entry:", error);
         }
       }
 }
 
 
-export default PatientPage
+export default EntryPage

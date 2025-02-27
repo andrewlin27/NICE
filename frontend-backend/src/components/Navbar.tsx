@@ -5,7 +5,7 @@ const Navbar = () => {
     <div>
         <ul>
             <li>Home</li>
-            <li>Patient</li>
+            <li>Entry</li>
             <li>Other</li>
         </ul>
         <hr/>
