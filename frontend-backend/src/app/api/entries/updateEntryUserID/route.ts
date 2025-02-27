@@ -7,19 +7,16 @@ export async function PUT(request: Request) {
         const { firstName, userId } = await request.json();
 
         if (!firstName) {
-            return NextResponse.json({ error: 'Missing id for update' }, { status: 400 });
+            return NextResponse.json({ error: 'Missing name for update' }, { status: 400 });
         }
         if (!userId) {
             return NextResponse.json({ error: 'Missing user id for update' }, { status: 400 });
         }
 
-        console.log(`Updating record with first_name = ${firstName} to set user_id = ${userId}`);
-
         const { data, error } = await supabase
             .from("entries")
             .update({"user_id": userId})
-            .ilike("first_name", firstName)
-            .select();
+            .ilike("first_name", firstName);
 
         if (error) {
             return NextResponse.json({ error: error.message }, { status: 500 });
