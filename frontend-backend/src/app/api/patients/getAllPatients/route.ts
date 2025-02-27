@@ -1,9 +1,10 @@
-import { createClient } from '../../../utils/supabase/server';
+import { createClientAnonKey } from '../../../../utils/supabase/server';
 import { NextResponse } from 'next/server';
 
+// Select All Patients
 export async function GET() {
   try {
-    const supabase = await createClient();
+    const supabase = await createClientAnonKey();
     const { data: patients, error } = await supabase.from("patients").select('*');
 
     if (error)  {

@@ -2,40 +2,35 @@ import React from 'react'
 
 const PatientPage = async () => {
 
-    async function getPatient() {
-        // these endpoints will be called in server-side
-        const response = await fetch('http://localhost:3000/api/exampleEndpoint', {
-            method:"GET",
-        });
-        return response.json()
-    }
-
-    async function postPatient(data: any) {
-        const response = await fetch('http://localhost:3000/api/exampleEndpoint', {
-            method:"POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(data),
-        });
-        return await response.json()
-    }
-
-    
-    const responseData = await getPatient();
-
-    const postData = {
-        name: "John Doe",
-        age: 30,
-    }
-    const postResponse = await postPatient(postData);
-
-    return (
-        <div>
-            <p>{responseData.message}</p>
-            <p>{postResponse.message}</p>
-        </div>
-    )
+    // insert a new patient
+    async function addPatient() {
+        const newPatient = {
+          first_name: "William",
+          last_name: "Wu",
+          age: 21,
+          physician_id: 1,
+        };
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/patients/addPatient`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(newPatient),
+            });
+            if (response.ok) {
+                const data = await response.json();
+                console.log("Inserted patient:", data);
+            }
+            else {
+                const errorData = await response.json();
+                console.error("Error from API:", errorData);
+                alert(`Error: ${errorData.error}`);
+            }
+        }
+        catch(error) {
+            console.error("Error posting patient:", error);
+        }
+      }
 }
+
 
 export default PatientPage
