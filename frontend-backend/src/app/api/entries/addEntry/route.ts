@@ -1,16 +1,16 @@
 import { createClientAnonKey } from '../../../../utils/supabase/server';
 import { NextResponse } from 'next/server';
 
-// Insert a new patient
+// Insert a new entry
 export async function POST(req: Request) {
     try {
       const supabase = await createClientAnonKey();
-      const { first_name, last_name, age, physician_id } = await req.json(); // Parse request body
+      const { first_name, last_name, age, user_id } = await req.json(); // Parse request body
   
-      // Insert data into 'patients' table
+      // Insert data into 'entries' table
       const { data, error } = await supabase
-        .from("patients")
-        .insert([{ first_name, last_name, age, physician_id }])
+        .from("entries")
+        .insert([{ first_name, last_name, age, user_id }])
         ;
   
       if (error) throw error;
