@@ -26,7 +26,7 @@ const EntryPage = async () => {
                 alert(`Error: ${errorData.error}`);
             }
         }
-        catch(error) {
+        catch (error) {
             console.error("Error posting entry:", error);
         }
       }
@@ -49,8 +49,9 @@ const EntryPage = async () => {
         }
     };
       
-    //addEntry();
-    //fetchEntriesByName();
+    // addEntry();
+    // fetchEntriesByName();
+
 
     return (
         <div>
