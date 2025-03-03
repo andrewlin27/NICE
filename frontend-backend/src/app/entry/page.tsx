@@ -50,7 +50,7 @@ const EntryPage = async () => {
     };
       
     //addEntry();
-    fetchEntriesByName();
+    //fetchEntriesByName();
 
     return (
         <div>

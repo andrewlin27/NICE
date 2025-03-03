@@ -1,12 +1,12 @@
 import { createClientAnonKey, createClientServiceRoleKey } from '../../../../utils/supabase/server';
 import { NextRequest, NextResponse } from "next/server";
 
-// Search entry by first_name or last_name
+// Search user by first_name or last_name
 export async function POST(req: NextRequest) {
   try {
       const supabase = await createClientAnonKey();
       const { searchTerm } = await req.json(); // Get search term from request body
-      let query = supabase.from("entries").select('*');
+      let query = supabase.from("user").select('*');
 
     // If searchTerm is provided, filter by first_name or last_name
     if (searchTerm) {
