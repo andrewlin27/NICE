@@ -1,11 +1,12 @@
 import React from 'react'
+import Link from 'next/link';
 
 const Navbar = () => {
   return (
     <div>
         <ul className='flex justify-center'>
-            <li className='font-bold text-lg py-2 px-4'>Home</li>
-            <li className='font-bold text-lg py-2 px-4'>Entry</li>
+            <li className='font-bold text-lg py-2 px-4'><Link href='/'>Home</Link></li>
+            <li className='font-bold text-lg py-2 px-4'><Link href='/entry'>Entry</Link></li>
             <li className='font-bold text-lg py-2 px-4'>Other</li>
         </ul>
         <hr/>
