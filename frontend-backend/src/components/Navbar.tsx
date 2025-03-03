@@ -6,7 +6,7 @@ const Navbar = () => {
     <div>
         <ul className='flex justify-center'>
             <li className='font-bold text-lg py-2 px-4'><Link href='/'>Home</Link></li>
-            <li className='font-bold text-lg py-2 px-4'><Link href='/entry'>Entry</Link></li>
+            <li className='font-bold text-lg py-2 px-4'><Link href='/entry'>Entries</Link></li>
             <li className='font-bold text-lg py-2 px-4'>Other</li>
         </ul>
         <hr/>
