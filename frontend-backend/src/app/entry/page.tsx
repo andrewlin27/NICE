@@ -5,8 +5,8 @@ const EntryPage = async () => {
     // insert a new entry
     async function addEntry() {
         const newEntry = {
-            first_name: "Eric",
-            last_name: "Burns",
+            first_name: "John",
+            last_name: "Jones",
             age: 21,
             user_id: 1,
         };
@@ -31,7 +31,7 @@ const EntryPage = async () => {
         }
       }
     
-    const searchTerm = "eric";
+    const searchTerm = "john";
 
     const fetchEntriesByName = async () => {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getEntryByName`, {

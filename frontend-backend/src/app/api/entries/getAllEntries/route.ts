@@ -1,10 +1,10 @@
-import { createClientAnonKey } from '../../../../utils/supabase/server';
+import { createClientAnonKey, createClientServiceRoleKey } from '../../../../utils/supabase/server';
 import { NextResponse } from 'next/server';
 
 // Select All Entries
 export async function GET() {
   try {
-    const supabase = await createClientAnonKey();
+    const supabase = await createClientServiceRoleKey();
     const { data: entries, error } = await supabase.from("entries").select('*');
 
     if (error)  {
