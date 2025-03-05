@@ -8,7 +8,7 @@ export async function GET(req: NextRequest, context: { params: { entryID: string
         const { entryID } = await context.params;
 
         if (!entryID) {
-            return NextResponse.json({ error: 'Missing entry_id' }, { status: 400 });
+            return NextResponse.json({ error: 'Missing Entry ID' }, { status: 400 });
         }
         
         const { data: entry, error }: { data: any; error: any } = await supabase
@@ -16,9 +16,8 @@ export async function GET(req: NextRequest, context: { params: { entryID: string
             .select('*')
             .eq('entry_id', entryID);
         
-        console.log(entry);
         if (entry.length === 0) {
-            return NextResponse.json({ error: 'Entry not found' }, { status: 404 });
+            return NextResponse.json({ error: `Entry ID ${entryID} not found` }, { status: 404 });
         }
 
         if (error) {
