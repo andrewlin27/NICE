@@ -1,14 +1,42 @@
-import React from 'react';
+"use client";
 
-const page = async ({ params }: { params: { entryID: string } }) => {
-  // Fetch data from the API using the entryId from params
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getEntryByID/${params.entryID}`);
-  const entry = await response.json(); 
+import React, { useEffect, useState } from "react";
+import { useParams } from 'next/navigation'; // Import useParams
 
-  if (!response.ok) {
-    // Display custom error message when entry is not found
-    return <div>{entry.error}</div>;
-  }
+
+const Page  = () => {
+  const [entry, setEntry] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Unwrap params using useParams hook
+  const params = useParams();
+  
+  useEffect(() => {
+    const fetchEntry = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(
+          `${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getEntryByID/${params.entryID}`
+        );
+        const entry = await response.json();
+
+        if (!response.ok) {
+          setError(entry.error || "Failed to load entry");
+        } else {
+          setEntry(entry);
+        }
+      } catch (err) {
+        setError("Something went wrong.");
+      }
+      setLoading(false);
+    };
+
+    fetchEntry();
+  }, [params.ntryID]);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
 
   return (
     <div>
@@ -20,4 +48,4 @@ const page = async ({ params }: { params: { entryID: string } }) => {
   );
 };
 
-export default page;
+export default Page;
