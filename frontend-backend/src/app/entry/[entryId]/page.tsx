@@ -18,13 +18,13 @@ const Page = async ({ params }: { params: any }) => {
         };
     }
 
-    async function getEntry(entryId: string): Promise<Entry | null> {
+    async function getEntry(entryID: string): Promise<Entry | null> {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/entries/getEntryByID/${entryId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/entries/getEntryByID/${entryID}`, {
                 cache: "no-store",
             });
 
-            if (!response.ok) throw new Error("Could not find entryId");
+            if (!response.ok) throw new Error("Could not find entry ID");
 
             const data: Entry[] = await response.json();
             return data.length > 0 ? data[0] : null;
@@ -68,7 +68,7 @@ const Page = async ({ params }: { params: any }) => {
     }
 
     const prop = await params;
-    const entry = await getEntry(prop.entryId);
+    const entry = await getEntry(prop.entryID);
     const report = await getReport();
     const scan = await getScan();
 
