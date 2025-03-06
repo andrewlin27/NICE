@@ -1,51 +1,46 @@
-"use client";
+import React from "react";
+import { notFound } from "next/navigation";
 
-import React, { useEffect, useState } from "react";
-import { useParams } from 'next/navigation'; // Import useParams
+const Page = async ({ params }: { params: any }) => {
 
+    interface Entry {
+        entry_id: number;
+        first_name: string;
+        last_name: string;
+        age: number;
+    }
 
-const Page  = () => {
-  const [entry, setEntry] = useState<any>(null);
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
+    async function getEntry(entryId: string): Promise<Entry | null> {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/entries/getEntryByID/${entryId}`, {
+                cache: "no-store",
+            });
 
-  // Unwrap params using useParams hook
-  const params = useParams();
-  
-  useEffect(() => {
-    const fetchEntry = async () => {
-      setLoading(true);
-      try {
-        const response = await fetch(
-          `${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getEntryByID/${params.entryID}`
-        );
-        const entry = await response.json();
+            if (!response.ok) throw new Error("Could not find entryId");
 
-        if (!response.ok) {
-          setError(entry.error || "Failed to load entry");
-        } else {
-          setEntry(entry);
+            const data: Entry[] = await response.json();
+            return data.length > 0 ? data[0] : null;
+        } catch (error) {
+            console.error("Error fetching entry:", error);
+            return null;
         }
-      } catch (err) {
-        setError("Something went wrong.");
-      }
-      setLoading(false);
-    };
+    }
 
-    fetchEntry();
-  }, [params.ntryID]);
+    const prop = await params;
+    const entry = await getEntry(prop.entryId);
+    
+    if (!entry) return notFound();
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>{error}</div>;
-
-  return (
-    <div>
-      <h1>Entry ID: {params.entryID}</h1>
-      <div>
-        <pre>{JSON.stringify(entry, null, 2)}</pre>
-      </div>
-    </div>
-  );
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+            <div className="max-w-lg bg-white p-6 rounded-lg shadow-md text-center">
+                <h1 className="text-3xl font-bold text-gray-900">
+                    {entry.first_name} {entry.last_name}
+                </h1>
+                <p className="mt-2 text-lg text-gray-600">Age: {entry.age}</p>
+            </div>
+        </div>
+    );
 };
 
 export default Page;
