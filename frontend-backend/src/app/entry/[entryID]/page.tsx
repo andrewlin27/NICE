@@ -18,6 +18,10 @@ const Page = async ({ params }: { params: any }) => {
         };
     }
 
+    interface Image {
+        image_link: string;
+    }
+
     async function getEntry(entryID: string): Promise<Entry | null> {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/entries/getEntryByID/${entryID}`, {
@@ -51,26 +55,31 @@ const Page = async ({ params }: { params: any }) => {
         }
     }
 
-    async function getScan(): Promise<string> {
+    // fetching image links
+    async function getImages(entryID: string): Promise<Image[]> { {
         try {
-            const supabase = await createClientServiceRoleKey();
-            let rand: string | number = Math.floor(Math.random() * (33 + 1));
-            if (rand < 10) {
-                rand = `${rand}0`;
-            }
-            const { data } = await supabase.storage.from('scans').getPublicUrl(`Tr-no_00${rand}.jpg`)
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/images/getImagesByEntryID/${entryID}`, {
+                cache: "no-store",
+            });
 
-            return data.publicUrl;
+            if (!response.ok) throw new Error("Could not find entry ID");
+
+            const data: Image[] = await response.json();
+            return data;
         } catch (error) {
-            console.error("Error fetching report:", error);
-            return '';
+            console.error("Error fetching images:", error);
+            return [];
+            
         }
-    }
+    }}       
 
     const prop = await params;
     const entry = await getEntry(prop.entryID);
     const report = await getReport();
-    const scan = await getScan();
+    const images = await getImages(prop.entryID);
+
+    console.log('******************')
+    console.log(images);
 
     if (!entry) return notFound();
 
@@ -80,7 +89,20 @@ const Page = async ({ params }: { params: any }) => {
                 <h1 className="text-3xl font-bold text-gray-900">
                     {entry.first_name} {entry.last_name}
                 </h1>
-                <img src={scan} style={{ maxHeight: '300px', width: '300px' }} />
+                <div className="flex flex-wrap justify-center gap-4 mt-4">
+                    {images.length > 0 ? (
+                        images.map((img, index) => (
+                        <img
+                            key={index}
+                            src={img.image_link}
+                            alt={img.image_link}
+                            className="max-h-40 w-auto border rounded-lg shadow-md"
+                        />
+                        ))
+                    ) : (
+                        <p className="text-gray-600">No images available</p>
+                    )}
+                </div>
                 <p className="mt-2 text-lg text-gray-600">Age: {entry.age}</p>
                 <p className="mt-2 text-lg text-gray-600">Status: {report?.status}</p>
                 <p className="mt-2 text-lg text-gray-600">Indication: {"N/A"}</p>
