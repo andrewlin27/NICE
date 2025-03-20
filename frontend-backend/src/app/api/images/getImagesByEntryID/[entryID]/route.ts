@@ -1,4 +1,4 @@
-import { createClientAnonKey, createClientServiceRoleKey } from '../../../../../utils/supabase/server';
+import { createClientAnonKey, createClientServiceRoleKey } from '@//utils/supabase/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 // context object is where dynamic route parameters (params) are passed

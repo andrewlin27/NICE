@@ -1,4 +1,4 @@
-import { createClientAnonKey, createClientServiceRoleKey } from '../../../../utils/supabase/server';
+import { createClientAnonKey, createClientServiceRoleKey } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from "next/server";
 
 // Search user by first_name or last_name

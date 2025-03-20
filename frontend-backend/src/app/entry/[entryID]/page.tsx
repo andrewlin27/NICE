@@ -78,9 +78,6 @@ const Page = async ({ params }: { params: any }) => {
     const report = await getReport();
     const images = await getImages(prop.entryID);
 
-    console.log('******************')
-    console.log(images);
-
     if (!entry) return notFound();
 
     return (

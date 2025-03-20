@@ -1,4 +1,4 @@
-import { createClientServiceRoleKey } from '../../../../utils/supabase/server';
+import { createClientServiceRoleKey } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
 export async function PUT(request: Request) {
