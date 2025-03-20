@@ -17,7 +17,7 @@ export async function GET(req: NextRequest, context: { params: { entryID: string
             .eq('entry_id', entryID);
         
         if (image_links.length === 0) {
-            return NextResponse.json({ error: `Entry ID ${entryID} not found` }, { status: 404 });
+            return NextResponse.json({ error: `Entry ID ${entryID} not found` }, { status: 200 });
         }
 
         if (error) {
