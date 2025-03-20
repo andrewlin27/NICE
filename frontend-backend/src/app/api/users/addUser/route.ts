@@ -1,4 +1,4 @@
-import { createClientAnonKey, createClientServiceRoleKey } from '../../../../utils/supabase/server';
+import { createClientAnonKey, createClientServiceRoleKey } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
 // Insert a new user
