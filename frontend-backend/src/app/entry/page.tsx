@@ -61,13 +61,13 @@ const EntryPage = () => {
 
     return (
         <div className="min-h-screen bg-gray-100 p-6">
-            <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">test</h1>
+            <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">Entries</h1>
             <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
                 <input 
                 type = "text"
                 value = {searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name"
+                placeholder="Search by name i.e. Jane Doe"
                 className='mb-4 p-2 border border-gray-300 rounded-md w-full'
                 />
 
