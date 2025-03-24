@@ -1,90 +1,79 @@
-import React from 'react'
+"use client";
+
+import React, { useState, useEffect} from 'react'
 import Link from 'next/link';
 
-const EntryPage = async () => {
 
-    interface Entry {
-        entry_id: number;
-        first_name: string;
-        last_name: string;
-        age: number;
-    }
+interface Entry {
+    entry_id: number;
+    first_name: string;
+    last_name: string;
+    age: number;
+}
 
-    async function getAllEntries(): Promise<Entry[]> {
+const EntryPage = () => {
+    const [entries, setEntries] = useState<Entry[]>([]);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [loading, setLoading] = useState(false);
+
+    const fetchEntries = async () => {
+        setLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getAllEntries`, {
-                cache: "no-store", // Ensure fresh data 
-            });
+            let url = "";
+            let options = {};
 
-            if (response.ok) {
-                return response.json();
+            if (searchTerm) {
+                url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getEntryByName`;
+                options = {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ searchTerm }),
+                };
             }
             else {
-                throw new Error("Failed to fetch entries");
+                url = `${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getAllEntries`;
+                options = { cache : "no-store" };
             }
-        } 
-        catch (error) {
+
+            const repsonse = await fetch(url, options);
+            const data = await repsonse.json();
+
+            if (repsonse.ok) {
+                setEntries(data);
+            } else {
+                console.error("Error fetching entries:", data.error);
+            }
+        } catch (error) {
             console.error("Error fetching entries:", error);
-            return [];
         }
-    }
-
-    // insert a new entry
-    async function addEntry() {
-        const newEntry = {
-            first_name: "John",
-            last_name: "Jones",
-            age: 21,
-            user_id: 1,
-        };
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/addEntry`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(newEntry),
-            });
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Inserted entry:", data);
-            }
-            else {
-                const errorData = await response.json();
-                console.error("Error from API:", errorData);
-                alert(`Error: ${errorData.error}`);
-            }
-        }
-        catch (error) {
-            console.error("Error posting entry:", error);
-        }
-    }
-
-    const searchTerm = "john";
-
-    const fetchEntriesByName = async () => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getEntryByName`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ searchTerm }),
-        });
-        const data = await response.json();
-        if (response.ok) {
-            console.log("Fetched entries:", data);
-        } else {
-            console.error("Error fetching entries:", data.error);
-        }
+        setLoading(false);
     };
 
-    // addEntry();
-    // fetchEntriesByName();
+    useEffect(() => {
+        const delayDebounce = setTimeout(() => {
+            fetchEntries();
+        }, 500);
 
-    const entries = await getAllEntries();
+        return () => clearTimeout(delayDebounce);
+    }, [searchTerm]);
+
     return (
         <div className="min-h-screen bg-gray-100 p-6">
             <h1 className="text-3xl font-bold text-center text-gray-900 mb-6">Entries</h1>
             <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-                {entries.length === 0 ? (
+                <input 
+                type = "text"
+                value = {searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                placeholder="Search by name i.e. Jane Doe"
+                className='mb-4 p-2 border border-gray-300 rounded-md w-full'
+                />
+
+                {loading ? (
+                    <p className="text-center text-gray-600">Loading...</p>
+                ) : entries.length === 0 ? (
                     <p className="text-center text-gray-600">No entries available.</p>
                 ) : (
                     <ul className="space-y-4">
@@ -99,8 +88,8 @@ const EntryPage = async () => {
                 )}
             </div>
         </div>
-    )
-}
+    );
+};
 
 
 export default EntryPage
