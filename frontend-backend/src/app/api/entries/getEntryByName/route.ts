@@ -6,11 +6,22 @@ export async function POST(req: NextRequest) {
   try {
       const supabase = await createClientAnonKey();
       const { searchTerm } = await req.json(); // Get search term from request body
+      const trimmedTerm = searchTerm.trim();
       let query = supabase.from("entries").select('*');
 
     // If searchTerm is provided, filter by first_name or last_name
-    if (searchTerm) {
-      query = query.or(`first_name.ilike.%${searchTerm}%, last_name.ilike.%${searchTerm}%`);
+
+    if (trimmedTerm) {
+      const parts = trimmedTerm.trim().split(/\s+/);
+      if (parts.length >= 2) {
+        const first_name = parts[0];
+        const last_name = parts.slice(1).join(" ");
+        query = query
+        .ilike("first_name", `%${first_name}%`)
+        .ilike("last_name", `%${last_name}%`);
+      } else {
+        query = query.or(`first_name.ilike.%${trimmedTerm}%,last_name.ilike.%${trimmedTerm}%`);
+      }
     }
 
     const { data: entries, error } = await query;
