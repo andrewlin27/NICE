@@ -68,7 +68,7 @@ const EntryPage = () => {
                 value = {searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="Search by name i.e. Jane Doe"
-                className='mb-4 p-2 border border-gray-300 rounded-md w-full'
+                className='mb-4 p-2 border border-gray-300 rounded-md w-full text-black'
                 />
 
                 {loading ? (
