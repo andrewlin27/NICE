@@ -1,0 +1,70 @@
+'use client';
+
+import React, { use, useState } from 'react';
+
+const AddEntryBtn: React.FC = () => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    first_name: '',
+    last_name: '',
+    age: '',
+    user_id: '',
+  });
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/addEntry`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error);
+      }
+
+      alert('Entry added successfully!');
+      setIsOpen(false);
+      setFormData({ first_name: '', last_name: '', age: '', user_id: '' });
+    } catch (error) {
+      alert(`Error: ${(error as Error).message}`);
+    }
+  };
+
+  return (
+    <div>
+      <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-600 hover:scale-105">Add Entry</button>
+      {isOpen && (
+        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="bg-white p-6 rounded-lg shadow-md w-80">
+            <h2 className="text-2xl mb-4 text-black">Add New Entry</h2>
+            {Object.keys(formData).map((key) => (
+              <div key={key} className="mb-2">
+                <label className="text-slate-800 block font-medium capitalize">{key.replace('_', ' ')}:</label>
+                <input
+                  type={key === 'age' ? 'number' : 'text'}
+                  name={key}
+                  value={formData[key as keyof typeof formData]}
+                  onChange={handleChange}
+                  className="border p-2 w-full rounded text-slate-800"
+                />
+              </div>
+            ))}
+            <div className="flex justify-end mt-4">
+              <button onClick={() => setIsOpen(false)} className="mr-2 text-gray-500 transition duration-300 ease-in-out hover:text-red-400 hover:scale-105">Cancel</button>
+              <button onClick={handleSubmit} className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-green-600 hover:scale-105">Submit</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default AddEntryBtn;
