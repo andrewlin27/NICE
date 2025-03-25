@@ -1,4 +1,7 @@
+"use client";
+
 import Link from 'next/link';
+import { signIn } from "next-auth/react";
 
 export default function Home() {
   return (
@@ -8,11 +11,9 @@ export default function Home() {
         <p className="mt-4 text-lg text-gray-700">
           A tool to assist doctors to identify certain areas in the brain if our machine learning model detects any abnormalities. 
         </p>
-        <Link href="/login">
-          <button className="mt-6 px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition">
-            Log In
-          </button>
-        </Link>
+        <button className="mt-6 px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition" onClick={() => signIn("google")}>
+          Log in
+        </button>
       </div>
     </div>
   );
