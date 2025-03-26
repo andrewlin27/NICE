@@ -4,9 +4,12 @@ import { useState, useEffect } from "react";
 export default function Images({ entryID }: { entryID: string }) {
 
     interface Report {
-        status: string;
+        condition_prediction: string;
         results: {
-            confidence: number;
+            confidence_glioma: number;
+            confidence_meningioma: number;
+            confidence_non_tumorous: number;
+            confidence_pituitary: number;
         };
     }
 
@@ -32,13 +35,18 @@ export default function Images({ entryID }: { entryID: string }) {
 
     const getReport = async (imageUrl: string) => {
         try {
-            const res = await fetch(`${process.env.FLASK_PUBLIC_BASE_URL}/scan_analysis`, {
+            const imageResponse = await fetch(imageUrl);
+            const blob = await imageResponse.blob();
+            const file = new File([blob], "scan.jpg", { type: blob.type });
+
+            const formData = new FormData();
+            formData.append("file", file);
+
+            const res = await fetch(`${process.env.NEXT_PUBLIC_FLASK_URL}scan_analysis`, {
                 method: "POST",
-                body: JSON.stringify({ image_url: imageUrl }),
-                headers: {
-                    "Content-Type": "application/json",
-                },
+                body: formData,
             });
+
             const report: Report = await res.json();
             setReports((prev) => ({ ...prev, [imageUrl]: report }));
         } catch (err) {
@@ -122,9 +130,12 @@ export default function Images({ entryID }: { entryID: string }) {
                                 alt={`Scan ${index + 1}`}
                                 className="max-h-40 w-auto border rounded-lg shadow-md"
                             />
-                            <p className="mt-2 text-lg text-gray-600">Status: {reports[img.image_link]?.status ?? "Loading..."}</p>
-                            <p className="mt-2 text-lg text-gray-600">Indication: {"N/A"}</p>
-                            <p className="mt-2 text-lg text-gray-600">Indication Confidence: {reports[img.image_link]?.results.confidence ?? "Loading..."}</p>
+                            <p className="mt-2 text-lg text-gray-600 underline font-bold">Confidence Levels</p>
+                            <p className="mt-0 text-lg text-gray-600">Glioma: {reports[img.image_link]?.results.confidence_glioma ?? "Loading..."}</p>
+                            <p className="mt-2 text-lg text-gray-600">Meningioma: {reports[img.image_link]?.results.confidence_meningioma ?? "Loading..."}</p>
+                            <p className="mt-2 text-lg text-gray-600">Non-tumerous: {reports[img.image_link]?.results.confidence_non_tumorous ?? "Loading..."}</p>
+                            <p className="mt-2 text-lg text-gray-600">Pituitary: {reports[img.image_link]?.results.confidence_pituitary ?? "Loading..."}</p>
+                            <p className="mt-6 text-lg text-gray-600">Condition Prediction: {reports[img.image_link]?.condition_prediction ?? "Loading..."}</p>
                         </div>
                     ))
                 ) : (

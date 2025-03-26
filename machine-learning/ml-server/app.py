@@ -2,12 +2,14 @@ import os
 import numpy as np
 from flask import Flask, flash, request, redirect, url_for, send_from_directory, Response
 from werkzeug.utils import secure_filename
+from flask_cors import CORS
 # import keras
 
 UPLOAD_FOLDER = './scans_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 app = Flask(__name__)
+CORS(app)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(app.config['UPLOAD_FOLDER']):
     os.makedirs(app.config['UPLOAD_FOLDER'])
@@ -31,7 +33,7 @@ def scan_analysis():
         "status": False,
         "inference_error": False,
         "results": {
-            "confidence_gilmoa": -1.00,
+            "confidence_glioma": -1.00,
             "confidence_meningioma": -1.00,
             "confidence_non_tumorous": -1.00,
             "confidence_pituitary": -1.00
@@ -66,7 +68,7 @@ def scan_analysis():
                 # predictions = model.predict(input_arr)
                 # predicted_class = np.argmax(predictions, axis=1)[0]
 
-                # scan_report['results']['confidence_gilmoa'] = str(predictions[0][0])
+                # scan_report['results']['confidence_glioma'] = str(predictions[0][0])
                 # scan_report['results']['confidence_meningioma'] = str(predictions[0][1])
                 # scan_report['results']['confidence_non_tumorous'] = str(predictions[0][2])
                 # scan_report['results']['confidence_pituitary'] = str(predictions[0][3])
