@@ -2,7 +2,7 @@ import os
 import numpy as np
 from flask import Flask, flash, request, redirect, url_for, send_from_directory, Response
 from werkzeug.utils import secure_filename
-import keras
+# import keras
 
 UPLOAD_FOLDER = './scans_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
@@ -14,7 +14,7 @@ if not os.path.exists(app.config['UPLOAD_FOLDER']):
 app.secret_key = "key"
 
 # Load your trained Keras model
-model = keras.saving.load_model('cnn_finetuned.keras')
+# model = keras.saving.load_model('cnn_finetuned.keras')
 classes = ['gilmoa', 'meningioma', 'non_tumorous', 'pituitary']
 
 def allowed_file(filename):
@@ -56,21 +56,21 @@ def scan_analysis():
                 file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
                 file.save(file_path)
 
-                image = keras.utils.load_img(
-                    file_path,
-                    target_size=(299, 299),
-                    )
-                input_arr = keras.utils.img_to_array(image)
-                input_arr = np.array([input_arr])
+                # image = keras.utils.load_img(
+                #     file_path,
+                #     target_size=(299, 299),
+                #     )
+                # input_arr = keras.utils.img_to_array(image)
+                # input_arr = np.array([input_arr])
 
-                predictions = model.predict(input_arr)
-                predicted_class = np.argmax(predictions, axis=1)[0]
+                # predictions = model.predict(input_arr)
+                # predicted_class = np.argmax(predictions, axis=1)[0]
 
-                scan_report['results']['confidence_gilmoa'] = str(predictions[0][0])
-                scan_report['results']['confidence_meningioma'] = str(predictions[0][1])
-                scan_report['results']['confidence_non_tumorous'] = str(predictions[0][2])
-                scan_report['results']['confidence_pituitary'] = str(predictions[0][3])
-                scan_report['condition_prediction'] = classes[predicted_class]
+                # scan_report['results']['confidence_gilmoa'] = str(predictions[0][0])
+                # scan_report['results']['confidence_meningioma'] = str(predictions[0][1])
+                # scan_report['results']['confidence_non_tumorous'] = str(predictions[0][2])
+                # scan_report['results']['confidence_pituitary'] = str(predictions[0][3])
+                # scan_report['condition_prediction'] = classes[predicted_class]
 
             except Exception as e:
                 print(f"Error during model inference: {e}")
