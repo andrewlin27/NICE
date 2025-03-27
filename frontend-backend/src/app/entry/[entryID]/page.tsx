@@ -2,6 +2,7 @@ import React from "react";
 import { createClientServiceRoleKey } from "@/utils/supabase/server";
 import { notFound } from "next/navigation";
 import Images from "@/components/Images";
+import RemoveEntryBtn from "@/components/RemoveEntryBtn";
 
 const Page = async ({ params }: { params: any }) => {
 
@@ -41,6 +42,7 @@ const Page = async ({ params }: { params: any }) => {
             <p className="text-lg text-gray-600">Age {entry.age}</p>
 
             <Images entryID={prop.entryID} />
+            <RemoveEntryBtn entryId={prop.entryID} />
         </div>
     );
 };
