@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import Link from 'next/link';
 import Fuse from 'fuse.js';
+import SortEntryBtn from './SortEntryBtn';
 
 interface Entry {
     entry_id: number;
@@ -44,7 +45,7 @@ const SearchResults = () => {
         });
     }, [allEntries]);
 
-    
+
     useEffect(() => {
         const delayDebounce = setTimeout(() => {
             if (searchTerm.trim() === '') {
@@ -65,13 +66,20 @@ const SearchResults = () => {
 
     return (
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
-            <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search by name i.e. Jane Doe"
-                className="mb-4 p-2 border border-gray-300 rounded-md w-full text-black"
-            />
+            <div className="flex w-full">
+                <input
+                    type="text"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search by name i.e. Jane Doe"
+                    className="mb-4 p-2 border border-gray-300 rounded-md w-[85%] text-black"
+                />
+                <SortEntryBtn
+                    allEntries={allEntries}
+                    setAllEntries={setAllEntries}
+                />
+            </div>
+
 
             {loading ? (
                 <p className="text-center text-gray-600">Loading...</p>
