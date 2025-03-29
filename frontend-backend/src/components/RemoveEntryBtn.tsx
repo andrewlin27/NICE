@@ -1,6 +1,7 @@
 'use client';
 
 import { exit } from 'process';
+import { useRouter } from 'next/navigation';
 import React, { use, useState } from 'react';
 
 interface RemoveEntryBtnProps {
@@ -9,6 +10,7 @@ interface RemoveEntryBtnProps {
 
 const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId }) => {
     const [isOpen, setIsOpen] = useState(false);
+    const router = useRouter();
 
     const handleSubmit = async () => {
         try {
@@ -25,6 +27,7 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId }) => {
 
             alert('Entry removed successfully!');
             setIsOpen(false);
+            router.push('/entry'); 
         } catch (error) {
             alert(`Error: ${(error as Error).message}`);
         }
