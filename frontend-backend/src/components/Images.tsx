@@ -100,11 +100,13 @@ export default function Images({ entryID }: { entryID: string }) {
     }, []);
 
     useEffect(() => {
-        images.forEach((img) => {
-            if (!reports[img.image_link]) {
-                getReport(img.image_link);
-            }
-        });
+        if (Array.isArray(images)) {
+            images.forEach((img) => {
+                if (!reports[img.image_link]) {
+                    getReport(img.image_link);
+                }
+            });
+        }
     }, [images]);
 
     return (
