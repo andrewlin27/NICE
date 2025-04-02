@@ -106,8 +106,6 @@ export default function Images({ entryID }: { entryID: string }) {
                     getReport(img.image_link);
                 }
             });
-        } else {
-            console.error("Images is not an array:", images);
         }
     }, [images]);
 
