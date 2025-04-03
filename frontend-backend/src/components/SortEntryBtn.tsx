@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import Button from './Button';
 
 interface Entry {
     entry_id: number;
@@ -34,15 +35,12 @@ const SortEntryBtn = ({ allEntries, setAllEntries }: SortEntryBtnProps) => {
 
     return (
         <div>
-            <button
-                className="ml-4 p-2 bg-blue-500 text-white rounded-md flex items-center justify-center space-x-2 transition duration-300 ease-in-out hover:bg-blue-600 hover:scale-105"
-                onClick={() => setIsOpen(!isOpen)}
-            >
+            <Button variant="primary" className="ml-4 flex items-center justify-center space-x-2" onClick={() => setIsOpen(!isOpen)}>
                 <span>Sort</span>
                 <svg className="w-5 h-5 text-gray-800 text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="white" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M7.75 4H19M7.75 4a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 4h2.25m13.5 6H19m-2.25 0a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 10h11.25m-4.5 6H19M7.75 16a2.25 2.25 0 0 1-4.5 0m4.5 0a2.25 2.25 0 0 0-4.5 0M1 16h2.25" />
                 </svg>
-            </button>
+            </Button>
             {isOpen && (
                 <div className="absolute bg-slate-300 mt-1 p-4 shadow-lg rounded-md boarder-solid">
                     <h3 className="mb-2 text-black">Sort By:</h3>
@@ -66,9 +64,10 @@ const SortEntryBtn = ({ allEntries, setAllEntries }: SortEntryBtnProps) => {
                             onChange={() => setAscending((prev) => !prev)}
                         />
                     </label>
-                    <button className="bg-blue-500 text-white p-1 w-[80%] rounded-md transition duration-300 ease-in-out hover:bg-blue-600 hover:scale-105" 
+                    <Button 
+                        variant="primary"
                         onClick={handleSort}>Apply
-                    </button>
+                    </Button>
                 </div>
             )}
         </div>

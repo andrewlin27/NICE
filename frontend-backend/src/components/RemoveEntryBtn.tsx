@@ -3,6 +3,7 @@
 import { exit } from 'process';
 import { useRouter } from 'next/navigation';
 import React, { use, useState } from 'react';
+import Button from './Button';
 
 interface RemoveEntryBtnProps {
     entryId: string;
@@ -37,27 +38,17 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, la
 
     return (
         <div className='mt-4'>
-            <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-600 hover:scale-105">Remove Entry</button>
+            <Button variant="primary" onClick={() => setIsOpen(true)}>Remove Entry</Button>
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md w-80">
                         <h2 className="text-2xl mb-4 text-black">Confirm Removal</h2>
-                        <p className="mb-4">
+                        <p className="mb-4 text-[#FB0202] font-bold text-lg">
                             Are you sure you want to remove {first_name} {last_name}?
                         </p>
                         <div className="flex justify-end">
-                            <button
-                                onClick={() => setIsOpen(false)}
-                                className="mr-6 text-gray-500 transition duration-300 ease-in-out hover:text-red-400 hover:scale-105"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSubmit}
-                                className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-green-600 hover:scale-105"
-                            >
-                                Confirm
-                            </button>
+                            <Button variant="danger" className="mr-2" onClick={() => setIsOpen(false)}>Cancel</Button>
+                            <Button variant="secondary" onClick={handleSubmit}>Confirm</Button>
                         </div>
                     </div>
                 </div>

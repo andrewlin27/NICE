@@ -50,7 +50,7 @@ const Page = async ({ params }: { params: any }) => {
     const age = await calculateAge(entry.dob);
     
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
+        <div className="min-h-screen flex flex-col items-center justify-center p-6">
             <h1 className="text-3xl font-bold text-gray-900">
                 {entry.first_name} {entry.last_name}
             </h1>
