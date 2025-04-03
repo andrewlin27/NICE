@@ -7,15 +7,15 @@ const Navbar = () => {
   const { data: session } = useSession(); // Get authentication status
 
   return (
-    <div>
+    <div className="bg-[#DFD9CF]">
       <ul className="flex justify-center">
-        <li className="font-bold text-lg py-2 px-4">
+        <li className="text-black font-bold text-lg py-2 px-4">
           <Link href="/">Home</Link>
         </li>
         
         {session ? (
           <>
-            <li className="font-bold text-lg py-2 px-4">
+            <li className="text-black font-bold text-lg py-2 px-4">
               <Link href="/entry">Entries</Link>
             </li>
             <li className="font-bold text-lg py-2 px-4">
