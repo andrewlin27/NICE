@@ -7,7 +7,7 @@ export default function Home() {
   const { data: session } = useSession(); // Get authentication status
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100">
+    <div className="flex min-h-screen flex-col items-center justify-center">
       <div className="max-w-3xl text-center">
         <h1 className="text-4xl font-bold text-gray-900">
           Neurological Imaging Classification & Evaluation (NICE)

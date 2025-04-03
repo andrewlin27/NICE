@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Button from "./Button";
 
 export default function Images({ entryID }: { entryID: string }) {
 
@@ -114,13 +115,13 @@ export default function Images({ entryID }: { entryID: string }) {
             <div className="flex flex-col items-center gap-4 my-5">
                 <div>
                     <input type="file" accept="image/*" onChange={handleFileChange} className="border p-2 mr-4 rounded" />
-                    <button
+                    <Button
+                        variant="primary"
                         onClick={handleUpload}
                         disabled={uploading}
-                        className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
                     >
                         {uploading ? "Uploading..." : "Upload Image"}
-                    </button>
+                    </Button>
                 </div>
                 {message && <p className="text-gray-600">{message}</p>}
             </div>

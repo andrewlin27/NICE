@@ -1,6 +1,7 @@
 'use client';
 
 import React, { use, useState } from 'react';
+import Button from './Button';
 
 const AddEntryBtn: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,7 +40,7 @@ const AddEntryBtn: React.FC = () => {
 
   return (
     <div>
-      <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-600 hover:scale-105">Add Entry</button>
+      <Button variant="primary" onClick={() => setIsOpen(true)}>Add Entry</Button>
       {isOpen && (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-80">
@@ -57,8 +58,8 @@ const AddEntryBtn: React.FC = () => {
               </div>
             ))}
             <div className="flex justify-end mt-4">
-              <button onClick={() => setIsOpen(false)} className="mr-2 text-gray-500 transition duration-300 ease-in-out hover:text-red-400 hover:scale-105">Cancel</button>
-              <button onClick={handleSubmit} className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-green-600 hover:scale-105">Submit</button>
+              <Button variant="danger" className="mr-2" onClick={() => setIsOpen(false)}>Cancel</Button>
+              <Button variant="secondary" onClick={handleSubmit}>Submit</Button>
             </div>
           </div>
         </div>
