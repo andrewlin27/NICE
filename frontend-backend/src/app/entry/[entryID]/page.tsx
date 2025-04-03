@@ -29,17 +29,32 @@ const Page = async ({ params }: { params: any }) => {
         }
     }
 
+    function calculateAge(dob: string): number {
+        const birthDate = new Date(dob);
+        const today = new Date();
+        let age = today.getFullYear() - birthDate.getFullYear();
+        const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+        if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+          age--;
+        }
+      
+        return age;
+      }
+
     const prop = await params;
     const entry = await getEntry(prop.entryID);
-
+    
+    
     if (!entry) return notFound();
-
+    const age = await calculateAge(entry.dob);
+    
     return (
         <div className="min-h-screen flex flex-col items-center justify-center bg-gray-100 p-6">
             <h1 className="text-3xl font-bold text-gray-900">
                 {entry.first_name} {entry.last_name}
             </h1>
-            <p className="text-lg text-gray-600">Date of Birth {entry.dob}</p>
+            <p className="text-lg text-gray-600">Age: {age}</p>
 
             <Images entryID={prop.entryID} />
             <RemoveEntryBtn entryId={prop.entryID} />
