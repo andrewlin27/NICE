@@ -42,7 +42,7 @@ const Page = async ({ params }: { params: any }) => {
             <p className="text-lg text-gray-600">Age {entry.age}</p>
 
             <Images entryID={prop.entryID} />
-            <RemoveEntryBtn entryId={prop.entryID} />
+            <RemoveEntryBtn entryId={prop.entryID} first_name={entry.first_name} last_name={entry.last_name}/>
         </div>
     );
 };
