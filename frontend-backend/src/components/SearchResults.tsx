@@ -9,7 +9,6 @@ interface Entry {
     entry_id: number;
     first_name: string;
     last_name: string;
-    age: number;
 }
 
 const SearchResults = () => {
@@ -93,7 +92,7 @@ const SearchResults = () => {
                                 href={`/entry/${entry.entry_id}`}
                                 className="block text-lg font-semibold text-blue-600 hover:underline"
                             >
-                                {entry.first_name} {entry.last_name} (Age: {entry.age})
+                                {entry.first_name} {entry.last_name}
                             </Link>
                         </li>
                     ))}

@@ -5,12 +5,12 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
     try {
       const supabase = await createClientAnonKey();
-      const { first_name, last_name, age, user_id } = await req.json(); // Parse request body
+      const { first_name, last_name, dob, user_id } = await req.json(); // Parse request body
   
       // Insert data into 'entries' table
       const { data, error } = await supabase
         .from("entries")
-        .insert([{ first_name, last_name, age, user_id }])
+        .insert([{ first_name, last_name, dob, user_id }])
         ;
   
       if (error) throw error;
