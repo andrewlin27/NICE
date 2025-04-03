@@ -10,7 +10,7 @@ const Page = async ({ params }: { params: any }) => {
         entry_id: number;
         first_name: string;
         last_name: string;
-        age: number;
+        dob: string;
     }
 
     async function getEntry(entryID: string): Promise<Entry | null> {
@@ -39,7 +39,7 @@ const Page = async ({ params }: { params: any }) => {
             <h1 className="text-3xl font-bold text-gray-900">
                 {entry.first_name} {entry.last_name}
             </h1>
-            <p className="text-lg text-gray-600">Age {entry.age}</p>
+            <p className="text-lg text-gray-600">Date of Birth {entry.dob}</p>
 
             <Images entryID={prop.entryID} />
             <RemoveEntryBtn entryId={prop.entryID} />
