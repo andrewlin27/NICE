@@ -4,7 +4,6 @@ interface Entry {
     entry_id: number;
     first_name: string;
     last_name: string;
-    age: number;
 }
 
 interface SortEntryBtnProps {
@@ -47,7 +46,7 @@ const SortEntryBtn = ({ allEntries, setAllEntries }: SortEntryBtnProps) => {
             {isOpen && (
                 <div className="absolute bg-slate-300 mt-1 p-4 shadow-lg rounded-md boarder-solid">
                     <h3 className="mb-2 text-black">Sort By:</h3>
-                    {['first_name', 'last_name', 'age'].map((option) => (
+                    {['first_name', 'last_name'].map((option) => (
                         <label key={option} className="block mb-2 text-black">
                             <input
                                 type="radio"

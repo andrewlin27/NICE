@@ -7,7 +7,7 @@ const AddEntryBtn: React.FC = () => {
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
-    age: '',
+    dob: '',
     user_id: '',
   });
 
@@ -31,7 +31,7 @@ const AddEntryBtn: React.FC = () => {
 
       alert('Entry added successfully!');
       setIsOpen(false);
-      setFormData({ first_name: '', last_name: '', age: '', user_id: '' });
+      setFormData({ first_name: '', last_name: '', dob: '', user_id: '' });
     } catch (error) {
       alert(`Error: ${(error as Error).message}`);
     }
@@ -48,7 +48,7 @@ const AddEntryBtn: React.FC = () => {
               <div key={key} className="mb-2">
                 <label className="text-slate-800 block font-medium capitalize">{key.replace('_', ' ')}:</label>
                 <input
-                  type={key === 'age' ? 'number' : 'text'}
+                  type={key === 'dob' ? 'date' : 'text'}
                   name={key}
                   value={formData[key as keyof typeof formData]}
                   onChange={handleChange}
