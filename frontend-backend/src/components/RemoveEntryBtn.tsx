@@ -6,9 +6,11 @@ import React, { use, useState } from 'react';
 
 interface RemoveEntryBtnProps {
     entryId: string;
+    first_name: string;
+    last_name: string;
 }
 
-const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId }) => {
+const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, last_name }) => {
     const [isOpen, setIsOpen] = useState(false);
     const router = useRouter();
 
@@ -34,19 +36,19 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId }) => {
     };
 
     return (
-        <div>
+        <div className='mt-4'>
             <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-600 hover:scale-105">Remove Entry</button>
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md w-80">
                         <h2 className="text-2xl mb-4 text-black">Confirm Removal</h2>
                         <p className="mb-4">
-                            Are you sure you want to remove the entry with ID {entryId}?
+                            Are you sure you want to remove {first_name} {last_name}?
                         </p>
                         <div className="flex justify-end">
                             <button
                                 onClick={() => setIsOpen(false)}
-                                className="mr-2 text-gray-500 transition duration-300 ease-in-out hover:text-red-400 hover:scale-105"
+                                className="mr-6 text-gray-500 transition duration-300 ease-in-out hover:text-red-400 hover:scale-105"
                             >
                                 Cancel
                             </button>
