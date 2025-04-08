@@ -14,6 +14,7 @@ export default function Images({ entryID }: { entryID: string }) {
     }
 
     interface Image {
+        image_id: number;
         image_link: string;
     }
 
