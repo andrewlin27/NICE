@@ -97,6 +97,8 @@ export default function Images({ entryID }: { entryID: string }) {
     };
 
     const handleDeleteImage = async (imageId: number) => {
+        const confirmed = window.confirm("Are you sure you want to delete this image?");
+        if (!confirmed) return;
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${imageId}`, {
                 method: "DELETE",
