@@ -96,6 +96,27 @@ export default function Images({ entryID }: { entryID: string }) {
         setFile(null);
     };
 
+    const handleDeleteImage = async (imageId: number) => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${imageId}`, {
+                method: "DELETE",
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                setImages((prev) => prev.filter((img) => img.image_id !== imageId));
+                setMessage("Image deleted successfully!");
+            } else {
+                setMessage(result.error || "Image deletion failed.");
+            }
+        }
+        catch (error) {
+            setMessage("An error occurred while deleting the image.");
+            console.error("Delete error:", error);
+        }
+    };
+
     useEffect(() => {
         getImages();
     }, []);
@@ -135,6 +156,12 @@ export default function Images({ entryID }: { entryID: string }) {
                                 alt={`Scan ${index + 1}`}
                                 className="max-h-40 w-auto border rounded-lg shadow-md"
                             />
+                            <button
+                                onClick={() => handleDeleteImage(img.image_id)}
+                                className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-200"
+                            >
+                                Delete Image
+                            </button>
                             <p className="mt-2 text-lg text-gray-600 underline font-bold">Confidence Levels</p>
                             <p className="mt-0 text-lg text-gray-600">Glioma: {reports[img.image_link]?.results.confidence_glioma ?? "Loading..."}</p>
                             <p className="mt-2 text-lg text-gray-600">Meningioma: {reports[img.image_link]?.results.confidence_meningioma ?? "Loading..."}</p>
