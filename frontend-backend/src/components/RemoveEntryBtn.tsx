@@ -30,7 +30,7 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, la
 
             alert('Entry removed successfully!');
             setIsOpen(false);
-            router.push('/entry'); 
+            router.push('/entry');
         } catch (error) {
             alert(`Error: ${(error as Error).message}`);
         }
@@ -38,7 +38,12 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, la
 
     return (
         <div className='mt-4'>
-            <Button variant="primary" onClick={() => setIsOpen(true)}>Remove Entry</Button>
+            <Button variant="primary" onClick={() => setIsOpen(true)} className="ml-4 flex items-center justify-center space-x-1">
+                <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                </svg>
+                <span>Delete Entry</span>
+            </Button>
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md w-80">

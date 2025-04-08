@@ -113,14 +113,18 @@ export default function Images({ entryID }: { entryID: string }) {
     return (
         <div className="flex flex-col items-center">
             <div className="flex flex-col items-center gap-4 my-5">
-                <div>
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="border p-2 mr-4 rounded" />
+                <div className="flex flex-row">
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="border p-2 mr-4 rounded text-black" />
                     <Button
-                        variant="primary"
+                        variant="basic"
                         onClick={handleUpload}
                         disabled={uploading}
+                        className="flex items-center justify-center space-x-1"
                     >
-                        {uploading ? "Uploading..." : "Upload Image"}
+                        <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01" />
+                        </svg>
+                        <span>{uploading ? "Uploading..." : "Upload Image"}</span>
                     </Button>
                 </div>
                 {message && <p className="text-gray-600">{message}</p>}
