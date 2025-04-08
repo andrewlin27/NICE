@@ -3,6 +3,7 @@
 import { exit } from 'process';
 import { useRouter } from 'next/navigation';
 import React, { use, useState } from 'react';
+import Button from './Button';
 
 interface RemoveEntryBtnProps {
     entryId: string;
@@ -29,7 +30,7 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, la
 
             alert('Entry removed successfully!');
             setIsOpen(false);
-            router.push('/entry'); 
+            router.push('/entry');
         } catch (error) {
             alert(`Error: ${(error as Error).message}`);
         }
@@ -37,27 +38,22 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, la
 
     return (
         <div className='mt-4'>
-            <button onClick={() => setIsOpen(true)} className="bg-blue-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-blue-600 hover:scale-105">Remove Entry</button>
+            <Button variant="primary" onClick={() => setIsOpen(true)} className="ml-4 flex items-center justify-center space-x-1">
+                <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                </svg>
+                <span>Delete Entry</span>
+            </Button>
             {isOpen && (
                 <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
                     <div className="bg-white p-6 rounded-lg shadow-md w-80">
                         <h2 className="text-2xl mb-4 text-black">Confirm Removal</h2>
-                        <p className="mb-4">
+                        <p className="mb-4 text-[#FB0202] font-bold text-lg">
                             Are you sure you want to remove {first_name} {last_name}?
                         </p>
                         <div className="flex justify-end">
-                            <button
-                                onClick={() => setIsOpen(false)}
-                                className="mr-6 text-gray-500 transition duration-300 ease-in-out hover:text-red-400 hover:scale-105"
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                onClick={handleSubmit}
-                                className="bg-green-500 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:bg-green-600 hover:scale-105"
-                            >
-                                Confirm
-                            </button>
+                            <Button variant="danger" className="mr-2" onClick={() => setIsOpen(false)}>Cancel</Button>
+                            <Button variant="secondary" onClick={handleSubmit}>Confirm</Button>
                         </div>
                     </div>
                 </div>

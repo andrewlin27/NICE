@@ -34,7 +34,9 @@ export default function RootLayout({
       >
         <SessionWrapper>  
           <Navbar />
-          {children}
+          <div className="bg-[#F4F0E9]">
+            {children}
+          </div>
         </SessionWrapper>
 
       </body>
