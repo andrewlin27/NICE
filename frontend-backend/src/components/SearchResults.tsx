@@ -66,13 +66,29 @@ const SearchResults = () => {
     return (
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">
             <div className="flex w-full">
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    placeholder="Search by name i.e. Jane Doe"
-                    className="mb-4 p-2 border border-gray-300 rounded-md w-[85%] text-black"
-                />
+                <div className='relative w-[85%]'>
+                    <svg className="absolute left-3 top-2.5 w-5 h-5 text-gray-800"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                    >
+                        <path
+                            stroke="currentColor"
+                            stroke-linecap="round"
+                            stroke-width="2"
+                            d="m21 21-3.5-3.5M17 10a7 7 0 1 1-14 0 7 7 0 0 1 14 0Z"
+                        />
+                    </svg>
+
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        placeholder="Search by name i.e. Jane Doe"
+                        className="mb-4 p-2 pl-10 border border-gray-300 rounded-md w-full text-black"
+                    />
+                </div>
                 <SortEntryBtn
                     allEntries={allEntries}
                     setAllEntries={setAllEntries}
@@ -90,7 +106,7 @@ const SearchResults = () => {
                         <li key={entry.entry_id} className="p-4 border-b border-gray-300">
                             <Link
                                 href={`/entry/${entry.entry_id}`}
-                                className="block text-lg font-semibold text-blue-600 hover:underline"
+                                className="block text-lg font-semibold text-black hover:underline"
                             >
                                 {entry.first_name} {entry.last_name}
                             </Link>

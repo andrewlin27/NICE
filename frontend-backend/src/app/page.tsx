@@ -2,6 +2,7 @@
 
 import { signIn, signOut, useSession } from "next-auth/react";
 import Link from "next/link";
+import Button from "@/components/Button"; 
 
 export default function Home() {
   const { data: session } = useSession(); // Get authentication status
@@ -19,20 +20,22 @@ export default function Home() {
         {session ? (
           <div className="mt-6">
             <p className="text-lg text-gray-900">Welcome, {session.user?.name}!</p>
-            <button
+            <Button
+              variant="primary"
               onClick={() => signOut()}
-              className="mt-4 px-6 py-3 text-lg font-semibold text-white bg-red-600 rounded-lg hover:bg-red-700 transition"
+              className="mt-6 px-6 py-3 text-lg font-semibold"
             >
               Sign Out
-            </button>
+            </Button>
           </div>
         ) : (
-          <button
-            className="mt-6 px-6 py-3 text-lg font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition"
+          <Button
+            variant="secondary"
             onClick={() => signIn("google")}
+            className="mt-6 px-6 py-3 text-lg font-semibold"
           >
             Log in with Google
-          </button>
+          </Button>
         )}
       </div>
     </div>
