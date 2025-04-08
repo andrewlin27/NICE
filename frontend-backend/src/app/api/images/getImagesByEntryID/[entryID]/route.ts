@@ -13,7 +13,7 @@ export async function GET(req: NextRequest, context: { params: { entryID: string
         
         const { data: image_links, error }: { data: any; error: any } = await supabase
             .from('images')
-            .select('image_link')
+            .select('image_id, image_link')
             .eq('entry_id', entryID);
         
         if (image_links.length === 0) {
