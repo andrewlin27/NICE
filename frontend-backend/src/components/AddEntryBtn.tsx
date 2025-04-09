@@ -86,8 +86,8 @@ const AddEntryBtn: React.FC = () => {
 
       </Button>
       {isOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-white p-6 rounded-lg shadow-md w-80">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={() => setIsOpen(false)}>
+          <div className="bg-white p-6 rounded-lg shadow-md w-80" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-2xl mb-4 text-black">Add New Entry</h2>
             {['first_name', 'last_name', 'DOB'].map((key) => (
               <div key={key} className="mb-2">
