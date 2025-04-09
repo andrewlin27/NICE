@@ -38,7 +38,7 @@ export default function Home() {
           Neurological Imaging Classification & Evaluation (NICE)
         </h1>
         <p className="mt-4 text-lg text-gray-700">
-          A tool to assist doctors in identifying certain areas in the brain if our machine learning model detects any abnormalities.
+          A machine learning based tool to assist physicians in identifying any abnormalities in the brain.
         </p>
 
         {session ? (
