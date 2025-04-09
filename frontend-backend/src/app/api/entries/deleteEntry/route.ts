@@ -1,7 +1,7 @@
 import { createClientAnonKey, createClientServiceRoleKey } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
-// Delete an entry
+// Automatically deletes the associated images from the 'images' table
 export async function DELETE(req: Request) {
     try {
         const supabase = await createClientServiceRoleKey();
@@ -18,6 +18,30 @@ export async function DELETE(req: Request) {
             .eq("entry_id", entry_id);
 
         if (error) throw error;
+
+
+        // delete images from scans storage
+        const filePath = `entry_${entry_id}`;
+        var filePaths = [];
+        const { data, error: storageError } = await supabase.storage.from('scans').list(`${filePath}/`);
+
+        if (storageError) {
+            return NextResponse.json({ error: storageError.message }, { status: 500 });
+        }
+
+        for (const file of data) {
+            filePaths.push(`entry_${entry_id}/${file.name}`);
+        }
+
+        const { data: removed, error: removeError } = await supabase
+            .storage
+            .from('scans')
+            .remove(filePaths);
+
+        if (removeError) {
+            return NextResponse.json({ error: removeError.message }, { status: 500 });
+        }
+
 
         return NextResponse.json({ message: "Entry deleted successfully" }, { status: 200 });
     } catch (error) {
