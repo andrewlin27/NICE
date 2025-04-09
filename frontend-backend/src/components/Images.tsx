@@ -46,6 +46,9 @@ export default function Images({ entryID }: { entryID: string }) {
 
             const res = await fetch(`${process.env.NEXT_PUBLIC_FLASK_URL}scan_analysis`, {
                 method: "POST",
+                headers: {
+                    "ngrok-skip-browser-warning": "1",
+                },
                 body: formData,
             });
 

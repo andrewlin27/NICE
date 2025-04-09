@@ -1,5 +1,4 @@
 import os
-import numpy as np
 from flask import Flask, request, send_from_directory
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
@@ -7,8 +6,8 @@ from flask_cors import CORS
 UPLOAD_FOLDER = './scans_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-# LOCAL, DUMMY
-INFERENCE_MODE = os.environ.get('FLASK_INFERENCE_MODE', 'LOCAL')
+# REAL, DUMMY
+INFERENCE_MODE = os.environ.get('FLASK_INFERENCE_MODE', 'REAL')
 
 app = Flask(__name__)
 CORS(app)
@@ -22,17 +21,14 @@ app.config['INFERENCE_MODE'] = INFERENCE_MODE
 app.secret_key = "key"
 
 # Load Keras model if local is selected
-if app.config['INFERENCE_MODE'] == 'LOCAL':
+if app.config['INFERENCE_MODE'] == 'REAL':
     import keras
-    model = keras.saving.load_model('cnn_finetuned.keras')
+    import numpy as np
+    model = keras.saving.load_model('./models/cnn_finetuned.keras')
     classes = ['Glioma', 'Meningioma', 'Non-tumorous', 'Pituitary Tumor']
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-@app.route("/")
-def hello_world():
-    return "Hello World!"
 
 @app.route("/scan_analysis", methods=['GET', 'POST'])
 def scan_analysis():
@@ -62,7 +58,7 @@ def scan_analysis():
             return scan_report, 400
 
         # If app is in real inference mode, run inference and 
-        if file and app.config['INFERENCE_MODE'] == 'LOCAL':
+        if file and app.config['INFERENCE_MODE'] == 'REAL':
             try:
                 # Save file to be loaded into ML model
                 filename = secure_filename(file.filename)
@@ -108,10 +104,6 @@ def scan_analysis():
       <input type=submit value=Upload>
     </form>
     '''
-
-@app.route('/uploads/<name>')
-def download_file(name):
-    return send_from_directory(app.config["UPLOAD_FOLDER"], name)
 
 if __name__ == '__main__':
     app.run(debug=True)
