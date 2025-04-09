@@ -89,9 +89,9 @@ const AddEntryBtn: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={() => setIsOpen(false)}>
           <div className="bg-white p-6 rounded-lg shadow-md w-80" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-2xl mb-4 text-black">Add New Entry</h2>
-            {['first_name', 'last_name', 'DOB'].map((key) => (
+            {['first_name', 'last_name', 'dob'].map((key) => (
               <div key={key} className="mb-2">
-                <label className="text-slate-800 block font-medium capitalize">{key.replace('_', ' ')}:</label>
+                <label className="text-slate-800 block font-medium capitalize">{key.replace('_', ' ').replace('dob','DOB')}:</label>
                 <input
                   type={key === 'dob' ? 'date' : 'text'}
                   name={key}
