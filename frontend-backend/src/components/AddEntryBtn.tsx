@@ -86,10 +86,10 @@ const AddEntryBtn: React.FC = () => {
 
       </Button>
       {isOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-80">
             <h2 className="text-2xl mb-4 text-black">Add New Entry</h2>
-            {['first_name', 'last_name', 'dob'].map((key) => (
+            {['first_name', 'last_name', 'DOB'].map((key) => (
               <div key={key} className="mb-2">
                 <label className="text-slate-800 block font-medium capitalize">{key.replace('_', ' ')}:</label>
                 <input
