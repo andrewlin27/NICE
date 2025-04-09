@@ -12,7 +12,7 @@ export async function PUT(request: Request) {
 
         const { data, error } = await supabase
             .from("users")
-            .update({ email, first_name: firstName, last_name: lastName })
+            .update({ email })
             .eq("user_id", userId);
 
         if (error) {

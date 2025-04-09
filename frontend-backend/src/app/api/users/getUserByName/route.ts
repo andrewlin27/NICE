@@ -1,3 +1,5 @@
+// We are using frontend filtering instead of this api call
+
 import { createClientAnonKey, createClientServiceRoleKey } from '@/utils/supabase/server';
 import { NextRequest, NextResponse } from "next/server";
 

@@ -1,11 +1,35 @@
 "use client";
 
 import { signIn, signOut, useSession } from "next-auth/react";
+import { useEffect } from "react";
 import Link from "next/link";
-import Button from "@/components/Button"; 
+import Button from "@/components/Button";
 
 export default function Home() {
   const { data: session } = useSession(); // Get authentication status
+
+  useEffect(() => {
+    const addUserToDatabase = async () => {
+      if (session?.user?.email) {
+        try {
+          await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}api/users/userLogIn`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              userEmail: session.user.email,
+            }),
+          });
+        } catch (error) {
+          console.error("Error adding user:", error);
+        }
+      }
+    };
+
+    addUserToDatabase();
+  }, [session]);
+
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center">
