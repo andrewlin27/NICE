@@ -7,8 +7,8 @@ from flask_cors import CORS
 UPLOAD_FOLDER = './scans_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
-# REAL, DUMMY
-INFERENCE_MODE = os.environ.get('FLASK_INFERENCE_MODE', 'DUMMY')
+# LOCAL, DUMMY
+INFERENCE_MODE = os.environ.get('FLASK_INFERENCE_MODE', 'LOCAL')
 
 app = Flask(__name__)
 CORS(app)
@@ -62,7 +62,7 @@ def scan_analysis():
             return scan_report, 400
 
         # If app is in real inference mode, run inference and 
-        if file and app.config['INFERENCE_MODE'] == 'REAL':
+        if file and app.config['INFERENCE_MODE'] == 'LOCAL':
             try:
                 # Save file to be loaded into ML model
                 filename = secure_filename(file.filename)
