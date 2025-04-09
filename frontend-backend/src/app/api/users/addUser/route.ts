@@ -1,3 +1,5 @@
+// The same functionality can be found in userLogIn
+
 import { createClientAnonKey, createClientServiceRoleKey } from '@/utils/supabase/server';
 import { NextResponse } from 'next/server';
 
@@ -5,12 +7,12 @@ import { NextResponse } from 'next/server';
 export async function POST(req: Request) {
     try {
       const supabase = await createClientServiceRoleKey();
-      const { email, first_name, last_name,} = await req.json(); // Parse request body
+      const { email } = await req.json(); // Parse request body
   
       // Insert data into 'entries' table
       const { data, error } = await supabase
         .from("users")
-        .insert([{ email, first_name, last_name}])
+        .insert([{ email }])
         ;
   
       if (error) throw error;

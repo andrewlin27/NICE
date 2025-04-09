@@ -2,8 +2,11 @@
 
 import React, { use, useState } from 'react';
 import Button from './Button';
+import { useSession } from 'next-auth/react';
+import { useEffect } from 'react';
 
 const AddEntryBtn: React.FC = () => {
+  const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
     first_name: '',
@@ -11,6 +14,41 @@ const AddEntryBtn: React.FC = () => {
     dob: '',
     user_id: '',
   });
+
+  // auto generate user_id based on signed in user email
+  const fetchUserId = async () => {
+    if (session?.user?.email) {
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/users/getUserByEmail`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userEmail: session.user.email,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to fetch user ID');
+        }
+
+        const data = await response.json();
+        setFormData((prev) => ({ ...prev, user_id: data[0].user_id }));
+      }
+      catch (error) {
+        console.error('Error fetching user ID:', error);
+      }
+    }
+  }
+
+  // Fetch user ID when session is available
+  useEffect(() => {
+    if (session?.user?.email) {
+      fetchUserId();
+    }
+  }, [session]);
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -51,7 +89,7 @@ const AddEntryBtn: React.FC = () => {
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
           <div className="bg-white p-6 rounded-lg shadow-md w-80">
             <h2 className="text-2xl mb-4 text-black">Add New Entry</h2>
-            {Object.keys(formData).map((key) => (
+            {['first_name', 'last_name', 'dob'].map((key) => (
               <div key={key} className="mb-2">
                 <label className="text-slate-800 block font-medium capitalize">{key.replace('_', ' ')}:</label>
                 <input
@@ -59,7 +97,7 @@ const AddEntryBtn: React.FC = () => {
                   name={key}
                   value={formData[key as keyof typeof formData]}
                   onChange={handleChange}
-                  className="border p-2 w-full rounded text-slate-800"
+                  className="border p-2 w-full rounded text-black"
                 />
               </div>
             ))}
