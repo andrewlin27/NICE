@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@supabase/ssr": "^0.5.2",
-    "@supabase/supabase-js": "^2.48.1",
+    "@supabase/supabase-js": "^2.49.4",
     "ajv": "^8.17.1",
     "dayjs": "^1.11.13",
     "dotenv": "^16.4.7",
