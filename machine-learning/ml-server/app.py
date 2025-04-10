@@ -7,7 +7,7 @@ UPLOAD_FOLDER = './scans_uploads'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 # REAL, DUMMY
-INFERENCE_MODE = os.environ.get('FLASK_INFERENCE_MODE', 'REAL')
+INFERENCE_MODE = os.environ.get('FLASK_INFERENCE_MODE', 'DUMMY')
 
 app = Flask(__name__)
 CORS(app)
