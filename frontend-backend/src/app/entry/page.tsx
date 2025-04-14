@@ -1,23 +1,17 @@
 'use client';
 
+import React, { useState } from 'react';
 import SearchResults from "@/components/SearchResults";
 import AddEntryBtn from "@/components/AddEntryBtn";
 import React, { useEffect, useState } from 'react';
 
 
 const EntryPage = () => {
-    const [entries, setEntries] = useState<Entry[]>([]);
+    const [refresh, setRefresh] = useState(false);
 
-    const fetchAllEntries = async () => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/entries/getAllEntries`);
-      const data = await response.json();
-      setEntries(data);
-    };
-  
-    useEffect(() => {
-      fetchAllEntries();
-    }, []);
-  
+    const handleEntryAdded () => {
+        setRefresh((prev) => !prev);
+    }
     return (
         <div className="min-h-screen p-6">
            <div className="flex justify-between items-center mt-3 mb-5 relative">
