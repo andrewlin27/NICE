@@ -9,22 +9,26 @@ const Navbar = () => {
   return (
     <div className="bg-[#DFD9CF]">
       <ul className="flex justify-center">
-        <li className="flex items-center justify-center space-x-1 text-lg py-2 px-4 font-bold text-black transition duration-200 ease-in-out hover:scale-105">
-          <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <path stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" />
-          </svg>
-          <Link href="/">Home</Link>
-        </li>
+        <Link href="/">
+          <li className="flex items-center justify-center space-x-1 text-lg py-2 px-4 font-bold text-black transition duration-200 ease-in-out hover:scale-105">
+            <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="black" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="m4 12 8-8 8 8M6 10.5V19a1 1 0 0 0 1 1h3v-3a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1v3h3a1 1 0 0 0 1-1v-8.5" />
+            </svg>
+            Home
+          </li>
+        </Link>
 
         {session ? (
           <>
-            <li className="flex items-center justify-center space-x-1 text-lg py-2 px-4 font-bold text-black transition duration-200 ease-in-out hover:scale-105">
-              <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                <path stroke="black" strokeLinecap="round" strokeWidth="2" d="M5 7h14M5 12h14M5 17h14" />
-              </svg>
-              <Link href="/entry">Entries</Link>
+            <Link href="/entry">
+              <li className="flex items-center justify-center space-x-1 text-lg py-2 px-4 font-bold text-black transition duration-200 ease-in-out hover:scale-105">
+                <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                  <path stroke="black" strokeLinecap="round" strokeWidth="2" d="M5 7h14M5 12h14M5 17h14" />
+                </svg>
+                Entries
+              </li>
+            </Link>
 
-            </li>
             <li className="font-bold text-lg">
               <button onClick={() => signOut()} className="flex items-center justify-center space-x-1 text-lg py-2 px-4 font-bold text-[#D25875] transition duration-200 ease-in-out hover:scale-105">
                 <span>Sign Out</span>
