@@ -5,7 +5,7 @@ import Button from './Button';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 
-const AddEntryBtn: React.FC = () => {
+const AddEntryBtn: React.FC<{ onEntryAdded: () => void }> = ({ onEntryAdded }) => {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState({
@@ -71,6 +71,7 @@ const AddEntryBtn: React.FC = () => {
       alert('Entry added successfully!');
       setIsOpen(false);
       setFormData({ first_name: '', last_name: '', dob: '', user_id: '' });
+      onEntryAdded();
     } catch (error) {
       alert(`Error: ${(error as Error).message}`);
     }

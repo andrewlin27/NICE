@@ -11,7 +11,11 @@ interface Entry {
     last_name: string;
 }
 
-const SearchResults = () => {
+interface SearchResultsProps {
+    entries: Entry[];
+  }  
+
+const SearchResults: React.FC<SearchResultsProps> = ({ entries }) => {
     const [allEntries, setAllEntries] = useState<Entry[]>([]);
     const [filteredEntries, setFilteredEntries] = useState<Entry[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
