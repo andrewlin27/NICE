@@ -159,19 +159,7 @@ export default function Images({ entryID }: { entryID: string }) {
         <div className="flex flex-col items-center">
             <div className="flex flex-col items-center gap-4 my-5">
                 <div className="flex flex-row">
-                    <label className="flex items-center justify-center p-2 border rounded cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-700 focus:outline-none focus:ring focus:ring-blue-200">
-                        <svg className="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01" />
-                        </svg>
-                        <input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleFileChange}
-                            className="hidden"
-                        />
-                        <span>"Select Image"</span>
-                    </label>
-
+                    <input type="file" accept="image/*" onChange={handleFileChange} className="border p-2 mr-4 rounded text-black" />
                     {file && (
                         <Button
                             variant="basic"
