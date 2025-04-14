@@ -4,10 +4,14 @@ import React, { use, useState } from 'react';
 import Button from './Button';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
+import SuccessModal from './SuccessModal';
+import FailedModal from './FailedModal';
 
 const AddEntryBtn: React.FC<{ onEntryAdded: () => void }> = ({ onEntryAdded }) => {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -67,14 +71,17 @@ const AddEntryBtn: React.FC<{ onEntryAdded: () => void }> = ({ onEntryAdded }) =
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-
-      alert('Entry added successfully!');
+      setShowSuccessModal(true);
       setIsOpen(false);
       setFormData({ first_name: '', last_name: '', dob: '', user_id: '' });
       onEntryAdded();
       fetchUserId();
     } catch (error) {
-      alert(`Error: ${(error as Error).message}`);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Failed to add entry');
+      }
     }
   };
 
@@ -127,6 +134,23 @@ const AddEntryBtn: React.FC<{ onEntryAdded: () => void }> = ({ onEntryAdded }) =
             </div>
           </div>
         </div>
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          message="Entry added successfully!"
+          onClose={() => {
+            setShowSuccessModal(false);
+            window.location.reload();
+          }}
+        />
+      )}
+      {error && (
+        <FailedModal
+          message={error}
+          onClose={() => {
+            setError(null);
+          }}
+        />
       )}
     </div>
   );
