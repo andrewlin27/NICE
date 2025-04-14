@@ -1,6 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import Button from "./Button";
+import SuccessModal from "./SuccessModal";
+import FailedModal from "./FailedModal";
+import ConfirmModal from "./ConfirmModal";
 
 export default function Images({ entryID }: { entryID: string }) {
 
@@ -24,6 +27,11 @@ export default function Images({ entryID }: { entryID: string }) {
     const [message, setMessage] = useState("");
     const [images, setImages] = useState<Image[]>([]);
     const [reports, setReports] = useState<Record<string, Report | null>>({});
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [pendingDeleteImageId, setPendingDeleteImageId] = useState<number | null>(null);
+
 
     const getImages = async () => {
         try {
@@ -65,12 +73,12 @@ export default function Images({ entryID }: { entryID: string }) {
 
     const handleUpload = async () => {
         if (!file) {
-            setMessage("Please select a file.");
+            setError("Please select a file.");
             return;
         }
 
         setUploading(true);
-        setMessage("");
+        setError("");
 
         const formData = new FormData();
         formData.append("file", file);
@@ -83,42 +91,55 @@ export default function Images({ entryID }: { entryID: string }) {
             const result = await response.json();
 
             if (response.ok) {
-                setMessage("File uploaded successfully!");
+                setShowSuccessModal(true);
+                setMessage("Image uploaded successfully.");
                 await getImages();
             } else {
-                setMessage(result.error || "File upload failed.");
+                setError(result.error || "File upload failed.");
             }
         } catch (error) {
-            setMessage("An error occurred.");
-            console.error("Upload error:", error);
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Failed to add entry');
+            }
         }
 
         setUploading(false);
         setFile(null);
     };
 
-    const handleDeleteImage = async (imageId: number) => {
-        const confirmed = window.confirm("Are you sure you want to delete this image?");
-        if (!confirmed) return;
+    const handleDeleteImage = (imageId: number) => {
+        setMessage("Are you sure you want to delete this image?");
+        setPendingDeleteImageId(imageId);
+        setShowConfirmModal(true);
+    };
+
+    const confirmDeleteImage = async () => {
+        if (pendingDeleteImageId === null) return;
+
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${imageId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${pendingDeleteImageId}`, {
                 method: "DELETE",
             });
 
             const result = await response.json();
 
             if (response.ok) {
-                setImages((prev) => prev.filter((img) => img.image_id !== imageId));
-                setMessage("Image deleted successfully!");
+                setImages((prev) => prev.filter((img) => img.image_id !== pendingDeleteImageId));
+                setShowSuccessModal(true);
+                setMessage("Image deleted successfully.");
             } else {
-                setMessage(result.error || "Image deletion failed.");
+                setError(result.error || "Image deletion failed.");
             }
-        }
-        catch (error) {
-            setMessage("An error occurred while deleting the image.");
-            console.error("Delete error:", error);
+        } catch (error) {
+            setError("An error occurred while deleting the image.");
+        } finally {
+            setPendingDeleteImageId(null); // Clear pending state
+            setShowConfirmModal(false);    // Hide confirm modal
         }
     };
+
 
     useEffect(() => {
         getImages();
@@ -151,7 +172,6 @@ export default function Images({ entryID }: { entryID: string }) {
                         <span>{uploading ? "Uploading..." : "Upload Image"}</span>
                     </Button>
                 </div>
-                {message && <p className="text-gray-600">{message}</p>}
             </div>
 
             <div className="flex flex-wrap justify-center items-center gap-8">
@@ -184,6 +204,34 @@ export default function Images({ entryID }: { entryID: string }) {
                     <p className="text-gray-600">No images available</p>
                 )}
             </div>
+            {showSuccessModal && (
+                <SuccessModal
+                    message={message}
+                    onClose={() => {
+                        setShowSuccessModal(false);
+                    }
+                    }
+                />
+            )}
+            {error && (
+                <FailedModal
+                    message={error}
+                    onClose={() => {
+                        setError(null);
+                    }}
+                />
+            )}
+            {showConfirmModal && (
+                <ConfirmModal
+                    message={message}
+                    onConfirm={confirmDeleteImage}
+                    onCancel={() => {
+                        setShowConfirmModal(false);
+                        setPendingDeleteImageId(null); // Cancel deletion
+                    }}
+                />
+            )}
+
         </div>
 
     );
