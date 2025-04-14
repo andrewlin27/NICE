@@ -29,17 +29,19 @@ export async function DELETE(req: Request) {
             return NextResponse.json({ error: storageError.message }, { status: 500 });
         }
 
-        for (const file of data) {
-            filePaths.push(`entry_${entry_id}/${file.name}`);
-        }
+        if (data.length > 0) {
+            for (const file of data) {
+                filePaths.push(`entry_${entry_id}/${file.name}`);
+            }
 
-        const { data: removed, error: removeError } = await supabase
-            .storage
-            .from('scans')
-            .remove(filePaths);
+            const { data: removed, error: removeError } = await supabase
+                .storage
+                .from('scans')
+                .remove(filePaths);
 
-        if (removeError) {
-            return NextResponse.json({ error: removeError.message }, { status: 500 });
+            if (removeError) {
+                return NextResponse.json({ error: removeError.message }, { status: 500 });
+            }
         }
 
 
