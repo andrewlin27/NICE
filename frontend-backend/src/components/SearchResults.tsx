@@ -12,10 +12,10 @@ interface Entry {
 }
 
 interface SearchResultsProps {
-    entries: Entry[];
+    refresh: boolean;
   }  
 
-const SearchResults: React.FC<SearchResultsProps> = ({ entries }) => {
+const SearchResults: React.FC<SearchResultsProps> = ({ refresh }) => {
     const [allEntries, setAllEntries] = useState<Entry[]>([]);
     const [filteredEntries, setFilteredEntries] = useState<Entry[]>([]);
     const [searchTerm, setSearchTerm] = useState('');
@@ -65,7 +65,7 @@ const SearchResults: React.FC<SearchResultsProps> = ({ entries }) => {
 
     useEffect(() => {
         fetchAllEntries();
-    }, []);
+    }, [refresh]);
 
     return (
         <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-md">

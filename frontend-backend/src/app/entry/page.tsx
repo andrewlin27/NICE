@@ -3,15 +3,14 @@
 import React, { useState } from 'react';
 import SearchResults from "@/components/SearchResults";
 import AddEntryBtn from "@/components/AddEntryBtn";
-import React, { useEffect, useState } from 'react';
 
 
 const EntryPage = () => {
     const [refresh, setRefresh] = useState(false);
 
-    const handleEntryAdded () => {
+    const handleEntryAdded = () => {
         setRefresh((prev) => !prev);
-    }
+    }; 
     return (
         <div className="min-h-screen p-6">
            <div className="flex justify-between items-center mt-3 mb-5 relative">
@@ -19,11 +18,11 @@ const EntryPage = () => {
                     Entries
                 </h1>
                 <div className="ml-auto">
-                    <AddEntryBtn onEntryAdded={fetchAllEntries} />
+                    <AddEntryBtn onEntryAdded={handleEntryAdded} />
                 </div>
             </div>
             
-            <SearchResults entries={entries}/>
+            <SearchResults refresh={refresh}/>
         </div>
     );
 };
