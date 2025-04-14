@@ -72,6 +72,7 @@ const AddEntryBtn: React.FC<{ onEntryAdded: () => void }> = ({ onEntryAdded }) =
       setIsOpen(false);
       setFormData({ first_name: '', last_name: '', dob: '', user_id: '' });
       onEntryAdded();
+      fetchUserId();
     } catch (error) {
       alert(`Error: ${(error as Error).message}`);
     }
