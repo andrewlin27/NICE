@@ -4,10 +4,14 @@ import React, { use, useState } from 'react';
 import Button from './Button';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
+import SuccessModal from './SuccessModal';
+import FailedModal from './FailedModal';
 
-const AddEntryBtn: React.FC = () => {
+const AddEntryBtn: React.FC<{ onEntryAdded: () => void }> = ({ onEntryAdded }) => {
   const { data: session } = useSession();
   const [isOpen, setIsOpen] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     first_name: '',
     last_name: '',
@@ -67,12 +71,17 @@ const AddEntryBtn: React.FC = () => {
         const errorData = await response.json();
         throw new Error(errorData.error);
       }
-
-      alert('Entry added successfully!');
+      setShowSuccessModal(true);
       setIsOpen(false);
       setFormData({ first_name: '', last_name: '', dob: '', user_id: '' });
+      onEntryAdded();
+      fetchUserId();
     } catch (error) {
-      alert(`Error: ${(error as Error).message}`);
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError('Failed to add entry');
+      }
     }
   };
 
@@ -89,24 +98,59 @@ const AddEntryBtn: React.FC = () => {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50" onClick={() => setIsOpen(false)}>
           <div className="bg-white p-6 rounded-lg shadow-md w-80" onClick={(e) => e.stopPropagation()}>
             <h2 className="text-2xl mb-4 text-black">Add New Entry</h2>
-            {['first_name', 'last_name', 'dob'].map((key) => (
-              <div key={key} className="mb-2">
-                <label className="text-slate-800 block font-medium capitalize">{key.replace('_', ' ').replace('dob','DOB')}:</label>
-                <input
-                  type={key === 'dob' ? 'date' : 'text'}
-                  name={key}
-                  value={formData[key as keyof typeof formData]}
-                  onChange={handleChange}
-                  className="border p-2 w-full rounded text-black"
-                />
-              </div>
-            ))}
+            <div className="mb-2">
+              <label className="text-slate-800 block font-medium">First Name:</label>
+              <input
+                type='text'
+                name='first_name'
+                value={formData['first_name']}
+                onChange={handleChange}
+                className="border p-2 w-full rounded text-black"
+              />
+            </div>
+            <div className="mb-2">
+              <label className="text-slate-800 block font-medium">Last Name:</label>
+              <input
+                type='text'
+                name='last_name'
+                value={formData['last_name']}
+                onChange={handleChange}
+                className="border p-2 w-full rounded text-black"
+              />
+            </div>
+            <div className="mb-2">
+              <label className="text-slate-800 block font-medium">Date of Birth:</label>
+              <input
+                type='date'
+                name='dob'
+                value={formData['dob']}
+                onChange={handleChange}
+                className="border p-2 w-full rounded text-black"
+              />
+            </div>
             <div className="flex justify-end mt-4">
               <Button variant="danger" className="mr-2" onClick={() => setIsOpen(false)}>Cancel</Button>
               <Button variant="secondary" onClick={handleSubmit}>Submit</Button>
             </div>
           </div>
         </div>
+      )}
+      {showSuccessModal && (
+        <SuccessModal
+          message="Entry added successfully!"
+          onClose={() => {
+            setShowSuccessModal(false);
+            window.location.reload();
+          }}
+        />
+      )}
+      {error && (
+        <FailedModal
+          message={error}
+          onClose={() => {
+            setError(null);
+          }}
+        />
       )}
     </div>
   );

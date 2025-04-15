@@ -4,6 +4,9 @@ import { exit } from 'process';
 import { useRouter } from 'next/navigation';
 import React, { use, useState } from 'react';
 import Button from './Button';
+import FailedModal from './FailedModal';
+import SuccessModal from './SuccessModal';
+import ConfirmModal from './ConfirmModal';
 
 interface RemoveEntryBtnProps {
     entryId: string;
@@ -12,7 +15,9 @@ interface RemoveEntryBtnProps {
 }
 
 const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, last_name }) => {
-    const [isOpen, setIsOpen] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async () => {
@@ -28,35 +33,49 @@ const RemoveEntryBtn: React.FC<RemoveEntryBtnProps> = ({ entryId, first_name, la
                 throw new Error(errorData.error);
             }
 
-            alert('Entry removed successfully!');
-            setIsOpen(false);
-            router.push('/entry');
+            setShowSuccessModal(true);
+            setShowConfirmModal(false);
         } catch (error) {
-            alert(`Error: ${(error as Error).message}`);
-        }
+            if (error instanceof Error) {
+              setError(error.message);
+            } else {
+              setError('Failed to remove entry');
+            }
+          }
     };
 
     return (
         <div className='mt-4'>
-            <Button variant="primary" onClick={() => setIsOpen(true)} className="ml-4 flex items-center justify-center space-x-1">
+            <Button variant="primary" onClick={() => setShowConfirmModal(true)} className="ml-4 flex items-center justify-center space-x-1">
                 <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                     <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
                 </svg>
                 <span>Delete Entry</span>
             </Button>
-            {isOpen && (
-                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-                    <div className="bg-white p-6 rounded-lg shadow-md w-80">
-                        <h2 className="text-2xl mb-4 text-black">Confirm Removal</h2>
-                        <p className="mb-4 text-[#FB0202] font-bold text-lg">
-                            Are you sure you want to remove {first_name} {last_name}?
-                        </p>
-                        <div className="flex justify-end">
-                            <Button variant="danger" className="mr-2" onClick={() => setIsOpen(false)}>Cancel</Button>
-                            <Button variant="secondary" onClick={handleSubmit}>Confirm</Button>
-                        </div>
-                    </div>
-                </div>
+            {showConfirmModal && (
+                <ConfirmModal
+                message={`Are you sure you want to remove ${first_name} ${last_name}?`}
+                onCancel={() => setShowConfirmModal(false)}
+                onConfirm={() => {
+                  handleSubmit();
+                }}
+              />
+            )}
+            {showSuccessModal && (
+                <SuccessModal
+                    message="Entry removed successfully!"
+                    onClose={() => {setShowSuccessModal(false)
+                        router.push('/entry');
+                    }
+
+                    }
+                />
+            )}
+            {error && (
+                <FailedModal
+                    message={error}
+                    onClose={() => setError(null)}
+                />
             )}
         </div>
     );

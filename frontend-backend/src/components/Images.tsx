@@ -1,6 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
 import Button from "./Button";
+import SuccessModal from "./SuccessModal";
+import FailedModal from "./FailedModal";
+import ConfirmModal from "./ConfirmModal";
 
 export default function Images({ entryID }: { entryID: string }) {
 
@@ -19,11 +22,16 @@ export default function Images({ entryID }: { entryID: string }) {
         image_link: string;
     }
 
-    const [file, setFile] = useState<File | null>(null);
+    const [files, setFiles] = useState<File[] | null>(null);
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState("");
     const [images, setImages] = useState<Image[]>([]);
     const [reports, setReports] = useState<Record<string, Report | null>>({});
+    const [showSuccessModal, setShowSuccessModal] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [pendingDeleteImageId, setPendingDeleteImageId] = useState<number | null>(null);
+
 
     const getImages = async () => {
         try {
@@ -62,21 +70,24 @@ export default function Images({ entryID }: { entryID: string }) {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
-            setFile(event.target.files[0]);
+            setFiles(Array.from(event.target.files));
         }
     };
 
     const handleUpload = async () => {
-        if (!file) {
-            setMessage("Please select a file.");
+        if (files && files.length === 0) {
+            setError("Please select a file.");
             return;
         }
 
         setUploading(true);
-        setMessage("");
+        setError("");
 
         const formData = new FormData();
-        formData.append("file", file);
+
+        files?.forEach((file) => {
+            formData.append("file", file);
+        });
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/uploadImage/${entryID}`, {
@@ -86,42 +97,55 @@ export default function Images({ entryID }: { entryID: string }) {
             const result = await response.json();
 
             if (response.ok) {
-                setMessage("File uploaded successfully!");
+                setShowSuccessModal(true);
+                setMessage("Image uploaded successfully.");
                 await getImages();
             } else {
-                setMessage(result.error || "File upload failed.");
+                setError(result.error || "File upload failed.");
             }
         } catch (error) {
-            setMessage("An error occurred.");
-            console.error("Upload error:", error);
+            if (error instanceof Error) {
+                setError(error.message);
+            } else {
+                setError('Failed to add entry');
+            }
         }
 
         setUploading(false);
-        setFile(null);
+        setFiles(null);
     };
 
-    const handleDeleteImage = async (imageId: number) => {
-        const confirmed = window.confirm("Are you sure you want to delete this image?");
-        if (!confirmed) return;
+    const handleDeleteImage = (imageId: number) => {
+        setMessage("Are you sure you want to delete this image?");
+        setPendingDeleteImageId(imageId);
+        setShowConfirmModal(true);
+    };
+
+    const confirmDeleteImage = async () => {
+        if (pendingDeleteImageId === null) return;
+
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${imageId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${pendingDeleteImageId}`, {
                 method: "DELETE",
             });
 
             const result = await response.json();
 
             if (response.ok) {
-                setImages((prev) => prev.filter((img) => img.image_id !== imageId));
-                setMessage("Image deleted successfully!");
+                setImages((prev) => prev.filter((img) => img.image_id !== pendingDeleteImageId));
+                setShowSuccessModal(true);
+                setMessage("Image deleted successfully.");
             } else {
-                setMessage(result.error || "Image deletion failed.");
+                setError(result.error || "Image deletion failed.");
             }
-        }
-        catch (error) {
-            setMessage("An error occurred while deleting the image.");
-            console.error("Delete error:", error);
+        } catch (error) {
+            setError("An error occurred while deleting the image.");
+        } finally {
+            setPendingDeleteImageId(null); // Clear pending state
+            setShowConfirmModal(false);    // Hide confirm modal
         }
     };
+
 
     useEffect(() => {
         getImages();
@@ -141,26 +165,27 @@ export default function Images({ entryID }: { entryID: string }) {
         <div className="flex flex-col items-center">
             <div className="flex flex-col items-center gap-4 my-5">
                 <div className="flex flex-row">
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="border p-2 mr-4 rounded text-black" />
-                    <Button
-                        variant="basic"
-                        onClick={handleUpload}
-                        disabled={uploading}
-                        className="flex items-center justify-center space-x-1"
-                    >
-                        <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                            <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01" />
-                        </svg>
-                        <span>{uploading ? "Uploading..." : "Upload Image"}</span>
-                    </Button>
+                    <input type="file" accept="image/*" multiple onChange={handleFileChange} className="border p-2 mr-4 rounded text-black" />
+                    {files && (
+                        <Button
+                            variant="basic"
+                            onClick={handleUpload}
+                            disabled={uploading}
+                            className="flex items-center justify-center space-x-1"
+                        >
+                            <svg className="w-7 h-7" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v9m-5 0H5a1 1 0 0 0-1 1v4a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-4a1 1 0 0 0-1-1h-2M8 9l4-5 4 5m1 8h.01" />
+                            </svg>
+                            <span>{uploading ? "Uploading..." : files.length > 1 ? "Upload Images" : "Upload Image"}</span>
+                        </Button>
+                    )}
                 </div>
-                {message && <p className="text-gray-600">{message}</p>}
             </div>
 
             <div className="flex flex-wrap justify-center items-center gap-8">
                 {images.length > 0 ? (
                     images.map((img, index) => (
-                        <div className="flex flex-col items-center max-w-lg bg-white p-6 rounded-lg shadow-md text-center" key={index}>
+                        <div className="flex flex-col relative items-center max-w-lg bg-white p-6 rounded-lg shadow-md text-center" key={index}>
                             <img
                                 src={img.image_link}
                                 alt={`Scan ${index + 1}`}
@@ -168,9 +193,12 @@ export default function Images({ entryID }: { entryID: string }) {
                             />
                             <button
                                 onClick={() => handleDeleteImage(img.image_id)}
-                                className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-colors duration-200"
+                                className="absolute top-0 right-0 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:scale-110"
                             >
-                                Delete Image
+                                <svg className="w-6 h-6 text-red-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                                </svg>
+
                             </button>
                             <p className="mt-2 text-lg text-gray-600 underline font-bold">Confidence Levels</p>
                             <p className="mt-0 text-lg text-gray-600">Glioma: {reports[img.image_link]?.results.confidence_glioma ?? "Loading..."}</p>
@@ -184,6 +212,34 @@ export default function Images({ entryID }: { entryID: string }) {
                     <p className="text-gray-600">No images available</p>
                 )}
             </div>
+            {showSuccessModal && (
+                <SuccessModal
+                    message={message}
+                    onClose={() => {
+                        setShowSuccessModal(false);
+                    }
+                    }
+                />
+            )}
+            {error && (
+                <FailedModal
+                    message={error}
+                    onClose={() => {
+                        setError(null);
+                    }}
+                />
+            )}
+            {showConfirmModal && (
+                <ConfirmModal
+                    message={message}
+                    onConfirm={confirmDeleteImage}
+                    onCancel={() => {
+                        setShowConfirmModal(false);
+                        setPendingDeleteImageId(null); // Cancel deletion
+                    }}
+                />
+            )}
+
         </div>
 
     );
