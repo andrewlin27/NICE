@@ -22,7 +22,7 @@ export default function Images({ entryID }: { entryID: string }) {
         image_link: string;
     }
 
-    const [file, setFile] = useState<File | null>(null);
+    const [files, setFiles] = useState<File[] | null>(null);
     const [uploading, setUploading] = useState(false);
     const [message, setMessage] = useState("");
     const [images, setImages] = useState<Image[]>([]);
@@ -67,12 +67,12 @@ export default function Images({ entryID }: { entryID: string }) {
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         if (event.target.files && event.target.files.length > 0) {
-            setFile(event.target.files[0]);
+            setFiles(Array.from(event.target.files));
         }
     };
 
     const handleUpload = async () => {
-        if (!file) {
+        if (files && files.length === 0) {
             setError("Please select a file.");
             return;
         }
@@ -81,7 +81,10 @@ export default function Images({ entryID }: { entryID: string }) {
         setError("");
 
         const formData = new FormData();
-        formData.append("file", file);
+
+        files?.forEach((file) => {
+            formData.append("file", file);
+        });
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/uploadImage/${entryID}`, {
@@ -106,7 +109,7 @@ export default function Images({ entryID }: { entryID: string }) {
         }
 
         setUploading(false);
-        setFile(null);
+        setFiles(null);
     };
 
     const handleDeleteImage = (imageId: number) => {
@@ -159,8 +162,8 @@ export default function Images({ entryID }: { entryID: string }) {
         <div className="flex flex-col items-center">
             <div className="flex flex-col items-center gap-4 my-5">
                 <div className="flex flex-row">
-                    <input type="file" accept="image/*" onChange={handleFileChange} className="border p-2 mr-4 rounded text-black" />
-                    {file && (
+                    <input type="file" accept="image/*" multiple onChange={handleFileChange} className="border p-2 mr-4 rounded text-black" />
+                    {files && (
                         <Button
                             variant="basic"
                             onClick={handleUpload}
