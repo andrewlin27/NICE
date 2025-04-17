@@ -122,63 +122,36 @@ export default function Images({ entryID }: { entryID: string }) {
 
     const confirmDeleteImage = async () => {
         // if (pendingDeleteImageId === null) return;
-
-        const idsToDelete = selectedImages.length
-        ? selectedImages
-        : pendingDeleteImageId != null
-        ? [pendingDeleteImageId]
-        : []
-  
-        if (idsToDelete.length === 0) {
-            return;
-        }
-
-        const pathSegment = idsToDelete.map(String).join('/')
-
         try {
-            if (selectedImages.length > 0) {
-                let link = "";
-                for (const id of pendingDeleteImageIds) {
-                    link += `/${id}`;
-                }
 
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID${link}`, {
-                    method: "DELETE",
-                });
+            const idsToDelete = selectedImages.length
+                ? selectedImages
+                : pendingDeleteImageId != null
+                    ? [pendingDeleteImageId]
+                    : []
 
-                const result = await response.json();
+            if (idsToDelete.length === 0) {
+                return;
+            }
 
+            const pathSegment = idsToDelete.map(String).join('/')
 
-                if (response.ok) {
-                    setImages((prev) => prev.filter((img) => img.image_id !== pendingDeleteImageId));
-                    setShowSuccessModal(true);
-                    setMessage("Image deleted successfully.");
-                    setImages(imgs =>
-                        imgs.filter(img => !selectedImages.includes(img.image_id))
-                    )
-                    setSelectedImages([])
-                } else {
-                    setError(result.error || "Image deletion failed.");
-                }
-            } else if (pendingDeleteImageId) {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${pendingDeleteImageId}`, {
-                    method: "DELETE",
-                });
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${pathSegment}`, {
+                method: "DELETE",
+            });
+            const result = await response.json();
 
-                const result = await response.json();
-
-                if (response.ok) {
-                    setImages((prev) => prev.filter((img) => img.image_id !== pendingDeleteImageId));
-                    setShowSuccessModal(true);
-                    setMessage("Image deleted successfully.");
-                    setImages(imgs =>
-                        imgs.filter(img => !selectedImages.includes(img.image_id))
-                    )
-                    setSelectedImages([])
-                } else {
-                    setError(result.error || "Image deletion failed.");
-                }
-
+            if (response.ok) {
+                setImages((prev) => prev.filter((img) => !idsToDelete.includes(img.image_id)));
+                setShowSuccessModal(true);
+                setMessage("Image deleted successfully.");
+                setImages(imgs =>
+                    imgs.filter(img => !selectedImages.includes(img.image_id))
+                )
+                setSelectedImages([])
+            }
+            else {
+                setError(result.error || "Image deletion failed.");
             }
         } catch (error) {
             setError("An error occurred while deleting the image.");
