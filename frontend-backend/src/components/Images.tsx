@@ -31,6 +31,8 @@ export default function Images({ entryID }: { entryID: string }) {
     const [error, setError] = useState<string | null>(null);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [pendingDeleteImageId, setPendingDeleteImageId] = useState<number | null>(null);
+    const [pendingDeleteImageIds, setPendingDeleteIds] = useState<number[]>([]);
+    const [selectedImages, setSelectedImages] = useState<number[]>([]);
 
 
     const getImages = async () => {
@@ -119,20 +121,36 @@ export default function Images({ entryID }: { entryID: string }) {
     };
 
     const confirmDeleteImage = async () => {
-        if (pendingDeleteImageId === null) return;
-
+        // if (pendingDeleteImageId === null) return;
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${pendingDeleteImageId}`, {
+
+            const idsToDelete = selectedImages.length
+                ? selectedImages
+                : pendingDeleteImageId != null
+                    ? [pendingDeleteImageId]
+                    : []
+
+            if (idsToDelete.length === 0) {
+                return;
+            }
+
+            const pathSegment = idsToDelete.map(String).join('/')
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/api/images/removeImageByImageID/${pathSegment}`, {
                 method: "DELETE",
             });
-
             const result = await response.json();
 
             if (response.ok) {
-                setImages((prev) => prev.filter((img) => img.image_id !== pendingDeleteImageId));
+                setImages((prev) => prev.filter((img) => !idsToDelete.includes(img.image_id)));
                 setShowSuccessModal(true);
                 setMessage("Image deleted successfully.");
-            } else {
+                setImages(imgs =>
+                    imgs.filter(img => !selectedImages.includes(img.image_id))
+                )
+                setSelectedImages([])
+            }
+            else {
                 setError(result.error || "Image deletion failed.");
             }
         } catch (error) {
@@ -142,6 +160,18 @@ export default function Images({ entryID }: { entryID: string }) {
             setShowConfirmModal(false);    // Hide confirm modal
         }
     };
+
+    const toggleSelection = (id: number) => {
+        setSelectedImages(sel =>
+            sel.includes(id) ? sel.filter(item => item !== id) : [...sel, id]
+        )
+    }
+
+    const deleteSelectedImages = () => {
+        setPendingDeleteIds(selectedImages);
+        setMessage(`Delete ${selectedImages.length} images?`);
+        setShowConfirmModal(true);
+    }
 
 
     useEffect(() => {
@@ -179,32 +209,55 @@ export default function Images({ entryID }: { entryID: string }) {
                 </div>
             </div>
 
+            {selectedImages.length > 0 && (
+                <button
+                    onClick={deleteSelectedImages}
+                    className="mb-4 px-4 py-2 bg-red-600 text-white rounded hover:bg-red-700"
+                >
+                    Delete Selected ({selectedImages.length})
+                </button>
+            )}
+
             <div className="flex flex-wrap justify-center items-center gap-8">
                 {images.length > 0 ? (
-                    images.map((img, index) => (
-                        <div className="flex flex-col relative items-center max-w-lg bg-white p-6 rounded-lg shadow-md text-center" key={index}>
-                            <img
-                                src={img.image_link}
-                                alt={`Scan ${index + 1}`}
-                                className="max-h-40 w-auto border rounded-lg shadow-md"
-                            />
-                            <button
-                                onClick={() => handleDeleteImage(img.image_id)}
-                                className="absolute top-0 right-0 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:scale-110"
+                    images.map((img, index) => {
+                        const isSelected = selectedImages.includes(img.image_id);
+                        return (
+                            <div
+                                key={index}
+                                className={`relative flex flex-col items-center max-w-lg bg-white p-6 rounded-lg shadow-md text-center
+                              ${isSelected ? 'ring-4 ring-blue-400' : ''}`}
                             >
-                                <svg className="w-6 h-6 text-red-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
-                                    <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
-                                </svg>
+                                <input
+                                    type="checkbox"
+                                    checked={isSelected}
+                                    onChange={() => toggleSelection(img.image_id)}
+                                    className="absolute top-2 left-2 w-5 h-5 text-blue-600 bg-white border-gray-300 rounded"
+                                />
 
-                            </button>
-                            <p className="mt-2 text-lg text-gray-600 underline font-bold">Confidence Levels</p>
-                            <p className="mt-0 text-lg text-gray-600">Glioma: {reports[img.image_link]?.results.confidence_glioma ?? "Loading..."}</p>
-                            <p className="mt-2 text-lg text-gray-600">Meningioma: {reports[img.image_link]?.results.confidence_meningioma ?? "Loading..."}</p>
-                            <p className="mt-2 text-lg text-gray-600">Non-tumerous: {reports[img.image_link]?.results.confidence_non_tumorous ?? "Loading..."}</p>
-                            <p className="mt-2 text-lg text-gray-600">Pituitary: {reports[img.image_link]?.results.confidence_pituitary ?? "Loading..."}</p>
-                            <p className="mt-6 text-lg text-gray-600">Condition Prediction: {reports[img.image_link]?.condition_prediction ?? "Loading..."}</p>
-                        </div>
-                    ))
+                                <img
+                                    src={img.image_link}
+                                    alt={`Scan ${index + 1}`}
+                                    className="max-h-40 w-auto border rounded-lg shadow-md"
+                                />
+                                <button
+                                    onClick={() => handleDeleteImage(img.image_id)}
+                                    className="absolute top-0 right-0 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:scale-110"
+                                >
+                                    <svg className="w-6 h-6 text-red-600" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                        <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z" />
+                                    </svg>
+
+                                </button>
+                                <p className="mt-2 text-lg text-gray-600 underline font-bold">Confidence Levels</p>
+                                <p className="mt-0 text-lg text-gray-600">Glioma: {reports[img.image_link]?.results.confidence_glioma ?? "Loading..."}</p>
+                                <p className="mt-2 text-lg text-gray-600">Meningioma: {reports[img.image_link]?.results.confidence_meningioma ?? "Loading..."}</p>
+                                <p className="mt-2 text-lg text-gray-600">Non-tumerous: {reports[img.image_link]?.results.confidence_non_tumorous ?? "Loading..."}</p>
+                                <p className="mt-2 text-lg text-gray-600">Pituitary: {reports[img.image_link]?.results.confidence_pituitary ?? "Loading..."}</p>
+                                <p className="mt-6 text-lg text-gray-600">Condition Prediction: {reports[img.image_link]?.condition_prediction ?? "Loading..."}</p>
+                            </div>
+                        )
+                    })
                 ) : (
                     <p className="text-gray-600">No images available</p>
                 )}
