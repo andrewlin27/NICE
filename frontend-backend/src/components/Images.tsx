@@ -252,8 +252,8 @@ export default function Images({ entryID }: { entryID: string }) {
                                 <p className="mt-2 text-lg text-gray-600 underline font-bold">Confidence Levels</p>
                                 <p className="mt-0 text-lg text-gray-600">Glioma: {reports[img.image_link]?.results.confidence_glioma ?? "Loading..."}</p>
                                 <p className="mt-2 text-lg text-gray-600">Meningioma: {reports[img.image_link]?.results.confidence_meningioma ?? "Loading..."}</p>
-                                <p className="mt-2 text-lg text-gray-600">Non-tumerous: {reports[img.image_link]?.results.confidence_non_tumorous ?? "Loading..."}</p>
                                 <p className="mt-2 text-lg text-gray-600">Pituitary: {reports[img.image_link]?.results.confidence_pituitary ?? "Loading..."}</p>
+                                <p className="mt-2 text-lg text-gray-600">Non-tumorous: {reports[img.image_link]?.results.confidence_non_tumorous ?? "Loading..."}</p>
                                 <p className="mt-6 text-lg text-gray-600">Condition Prediction: {reports[img.image_link]?.condition_prediction ?? "Loading..."}</p>
                             </div>
                         )
