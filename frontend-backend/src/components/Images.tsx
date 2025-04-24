@@ -15,6 +15,7 @@ export default function Images({ entryID }: { entryID: string }) {
             confidence_non_tumorous: number;
             confidence_pituitary: number;
         };
+        image: string;
     }
 
     interface Image {
@@ -238,11 +239,21 @@ export default function Images({ entryID }: { entryID: string }) {
                                     className="absolute top-2 left-2 w-5 h-5 text-blue-600 bg-white border-gray-300 rounded"
                                 />
 
-                                <img
+                                {
+                                reports[img.image_link]?.image ? (
+                                    <img
+                                    src={reports[img.image_link]?.image}
+                                    alt={`Scan ${index + 1}`}
+                                    className="max-h-40 w-auto border rounded-lg shadow-md"
+                                    />
+                                ) : (
+                                    <img
                                     src={img.image_link}
                                     alt={`Scan ${index + 1}`}
                                     className="max-h-40 w-auto border rounded-lg shadow-md"
-                                />
+                                    />
+                                )
+                                }
                                 <button
                                     onClick={() => handleDeleteImage(img.image_id)}
                                     className="absolute top-0 right-0 text-white px-4 py-2 rounded transition duration-300 ease-in-out hover:scale-110"

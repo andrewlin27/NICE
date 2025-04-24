@@ -1,9 +1,10 @@
+import base64
 import os
 from flask import Flask, request, send_from_directory
 from werkzeug.utils import secure_filename
 from flask_cors import CORS
 
-UPLOAD_FOLDER = './scans_uploads'
+IMAGES_FOLDER = './images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg'}
 
 # REAL, DUMMY
@@ -12,9 +13,9 @@ INFERENCE_MODE = os.environ.get('FLASK_INFERENCE_MODE', 'REAL')
 app = Flask(__name__)
 CORS(app)
 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-if not os.path.exists(app.config['UPLOAD_FOLDER']):
-    os.makedirs(app.config['UPLOAD_FOLDER'])
+app.config['IMAGES_FOLDER'] = IMAGES_FOLDER
+if not os.path.exists(app.config['IMAGES_FOLDER']):
+    os.makedirs(app.config['IMAGES_FOLDER'])
 
 app.config['INFERENCE_MODE'] = INFERENCE_MODE
 
@@ -22,9 +23,16 @@ app.secret_key = "key"
 
 # Load Keras model if local is selected
 if app.config['INFERENCE_MODE'] == 'REAL':
-    import keras
+    import cv2
     import numpy as np
-    model = keras.saving.load_model('./models/cnn_finetuned.keras')
+    import matplotlib.pyplot as plt
+
+    import keras
+    model = keras.saving.load_model('./cnn_finetuned.keras')
+
+    from ultralytics import YOLO
+    seg_model = YOLO("seg.onnx")
+
     classes = ['Glioma', 'Meningioma', 'Non-tumorous', 'Pituitary Tumor']
 
 def allowed_file(filename):
@@ -43,7 +51,8 @@ def scan_analysis():
             "confidence_non_tumorous": -1.00,
             "confidence_pituitary": -1.00
         },
-        "condition_prediction": "N/A"
+        "condition_prediction": "N/A",
+        "image": "",
     }
 
     if request.method == 'POST':
@@ -62,7 +71,7 @@ def scan_analysis():
             try:
                 # Save file to be loaded into ML model
                 filename = secure_filename(file.filename)
-                file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+                file_path = os.path.join(app.config['IMAGES_FOLDER'], filename)
                 file.save(file_path)
 
                 # Load and format image to model's requirements (299x299 for Xception)
@@ -85,10 +94,32 @@ def scan_analysis():
                 scan_report['results']['confidence_pituitary'] = str(round(predictions[0][3] * 100, 2)) + "%"
                 scan_report['condition_prediction'] = classes[predicted_class]
 
+                """
+                Segmentation Route: Segment image if tumorous class detected
+                """
+                if predicted_class != 2:
+                    pre_image = cv2.imread(file_path)
+                    pre_image = cv2.resize(pre_image, (640, 640), interpolation=cv2.INTER_LINEAR)
+                    pre_image = cv2.cvtColor(pre_image, cv2.COLOR_BGR2RGB)
+                    results = seg_model(pre_image)
+                    segmented_image = results[0].plot()
+
+                    # Convert PIL to NumPy (RGB) then to BGR for OpenCV
+                    segmented_image_np = np.array(segmented_image)
+                    segmented_image_bgr = cv2.cvtColor(segmented_image_np, cv2.COLOR_RGB2BGR)
+
+                    # Save the image
+                    cv2.imwrite(os.path.join(app.config["IMAGES_FOLDER"], filename), segmented_image_bgr)
+
             except Exception as e:
                 print(f"Error during model inference: {e}")
                 scan_report['inference_error'] = True
                 return scan_report, 500
+
+        # Encode server image (Any alterations, i.e. resizing, bounding box)
+        with open(os.path.join(app.config["IMAGES_FOLDER"], filename), "rb") as img_file:
+            b64_data = base64.b64encode(img_file.read()).decode("utf-8")
+            scan_report['image'] = f"data:image/jpeg;base64,{b64_data}"
 
         # Return model results if no errors encountered
         scan_report['error'] = 'false'
