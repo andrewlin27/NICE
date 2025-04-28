@@ -1,0 +1,18 @@
+[project]
+name = "machine-learning"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "flask>=3.1.0",
+    "flask-cors>=5.0.1",
+    "gunicorn>=23.0.0",
+    "keras>=3.9.2",
+    "matplotlib>=3.10.1",
+    "onnx>=1.17.0",
+    "opencv-python>=4.11.0.86",
+    "pillow>=11.2.1",
+    "tensorflow>=2.19.0",
+    "ultralytics>=8.3.115",
+]
